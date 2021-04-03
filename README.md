@@ -3,12 +3,26 @@
 
 
 * cats-effects:
-** IO
-** Generic `F[_]:Async` 
+  * IO
+  * Generic `F[_]:Async` 
 
 ```
   libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.1.0"  
 ```
+
+Usage:
+
+```scala
+import cps.monads.cats.given
+
+...
+def doSomething(): IO[T] = async {
+  
+
+}
+
+```
+
 
 * scalaz IO:
 

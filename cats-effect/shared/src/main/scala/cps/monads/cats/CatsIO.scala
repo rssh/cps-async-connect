@@ -40,15 +40,11 @@ class CatsIOCpsAsyncMonad extends CpsAsyncMonad[IO]:
 
 
 
-class CatsIOCpsSchedulingMonad(ec: ExecutionContext) extends CatsIOCpsAsyncMonad with CpsSchedulingMonad[IO]:
-
-  def spawn[A](op: => IO[A]): IO[A] =
-    IO.delay(op).flatten.evalOn(ec)
-
-
-
 given catsIO: CpsAsyncMonad[IO] = CatsIOCpsAsyncMonad()
 
-given catsIOScheduling(using ec: ExecutionContext): CpsSchedulingMonad[IO] =
-        CatsIOCpsSchedulingMonad(ec) 
+
+given ioToFutureConversion(using runtime: unsafe.IORuntime): CpsMonadConversion[IO,Future] with
+
+   def apply[T](mf: CpsMonad[IO], mg: CpsMonad[Future], io:IO[T]): Future[T] =
+               io.unsafeToFuture() 
 

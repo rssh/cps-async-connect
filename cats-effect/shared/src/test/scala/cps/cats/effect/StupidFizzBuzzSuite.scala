@@ -10,7 +10,7 @@ import cps.monads.cats.given
 
 class StupidFizzBuzzSuite extends CatsEffectSuite {
 
-  test("make shure that FizBuzz run 100 times") {
+  test("make shure that FizBuzz run N times") {
     val run = 
       for {
          ctr <- IO.ref(0)
@@ -23,12 +23,12 @@ class StupidFizzBuzzSuite extends CatsEffectSuite {
                            _ <- if(x % 3 == 0) { IO.println("fizz") } else IO.unit
                            _ <- if(x % 5 == 0) { IO.println("buzz") } else IO.unit
                       } yield ()
-                    ) *> ctr.update(_ + 1) *> ctr.get ).iterateWhile(_ <= 100)
+                    ) *> ctr.update(_ + 1) *> ctr.get ).iterateWhile(_ <= 10)
       } yield ()
     run
   }
 
-  test("make shure that FizBuzz run 100 times in async loop") {
+  test("make shure that FizBuzz run N times in async loop") {
     val run = async {
        val ctr = await(IO.ref(0))
        while {
@@ -40,7 +40,7 @@ class StupidFizzBuzzSuite extends CatsEffectSuite {
           if v % 5 == 0 then 
              await(IO.println("buzz"))
           await(ctr.update(_ + 1))
-          v < 100 
+          v < 10 
        } do ()
     }
     run

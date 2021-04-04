@@ -1,4 +1,8 @@
 package cps.monads.cats
+/*
+ * (C) Ruslan Shevchenko <ruslan@shevchenko.kiev.ua>
+ * 2021
+ */
 
 import cats.effect._
 import cps._
@@ -6,7 +10,9 @@ import cps._
 import scala.util._
 import scala.concurrent._
 
-
+/**
+ * CpsAsyncMonad for cats-effect.
+ **/
 class CatsIOCpsAsyncMonad extends CpsAsyncMonad[IO]:
 
   type F[T] = IO[T]

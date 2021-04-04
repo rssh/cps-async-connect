@@ -3,7 +3,7 @@
  This is a helper connect objects for providing [dotty-cps-async](http://https://github.com/rssh/dotty-cps-async) CpsAsyncMonad typeclasses for common effect stacks.
 
 
-* cats-effects:
+## cats-effects:
 
 ```
   libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.1.0"  
@@ -29,7 +29,7 @@ def doSomething(): IO[T] = async[IO] {
   * Generic `F[_]:Sync` - catsSync (implements CpsTryMonad)
 
 
-* scalaz IO:
+## scalaz IO:
 
 ```
   libraryDependencies += "com.github.rssh" %%% "cps-async-connect-scalaz" % "0.1.0"  

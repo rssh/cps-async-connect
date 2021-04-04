@@ -2,9 +2,10 @@ val dottyVersion = "3.0.0-RC2"
 //val dottyVersion = "0.28.0-bin-20200907-101e620-NIGHTLY"
 //val dottyVersion = dottyLatestNightlyBuild.get
 
+ThisBuild/version := "0.1.0"
+ThisBuild/organization := "com.github.rssh"
+
 lazy val commonSettings = Seq(
-   version := "0.0.1-SNAPSHOT",
-   organization := "com.github.rssh",
    scalaVersion := dottyVersion,
    libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.5.0",
    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.23" % Test,
@@ -48,4 +49,7 @@ lazy val zio  = project
     name := "cps-async-connect-zio",
   )
 */
+
+lazy val root = (project in file(".")).aggregate(scalaz.jvm, scalaz.js, catsEffect.jvm, catsEffect.js)
+
 

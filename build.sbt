@@ -2,7 +2,7 @@ val dottyVersion = "3.0.0-RC2"
 //val dottyVersion = "0.28.0-bin-20200907-101e620-NIGHTLY"
 //val dottyVersion = dottyLatestNightlyBuild.get
 
-ThisBuild/version := "0.2.0"
+ThisBuild/version := "0.3.0-SNAPSHOT"
 ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(
@@ -50,6 +50,12 @@ lazy val zio  = project
   )
 */
 
-lazy val root = (project in file(".")).aggregate(scalaz.jvm, scalaz.js, catsEffect.jvm, catsEffect.js)
+lazy val root = (project in file("."))
+                .aggregate(scalaz.jvm, scalaz.js, catsEffect.jvm, catsEffect.js)
+                .settings(
+                   publish := {},
+                   publishLocal := {},
+                   publishArtifact := false
+                )
 
 

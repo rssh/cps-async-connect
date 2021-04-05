@@ -26,7 +26,8 @@ def doSomething(): IO[T] = async[IO] {
 
   * IO  -  catsIO  (implements CpsAsyncMonad with conversion to Future)
   * Generic `F[_]:Async` - catsAsync (implements CpsAsyncMonad)
-  * Generic `F[_]:Sync` - catsSync (implements CpsTryMonad)
+  * Generic `F[_]:MonadThrow` - catsMonadThrow (implements CpsTryMonad)
+  * Generic `F[_]:Monad` - catsMonad (implements CpsMonad)
 
 
 ## scalaz IO:

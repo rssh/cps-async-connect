@@ -10,7 +10,7 @@ import cps.monads.cats.given
 
 class StupidFizzBuzzSuite extends CatsEffectSuite {
 
-  test("make shure that FizBuzz run N times") {
+  test("make sure that FizBuzz run N times") {
     val run = 
       for {
          ctr <- IO.ref(0)
@@ -28,7 +28,7 @@ class StupidFizzBuzzSuite extends CatsEffectSuite {
     run
   }
 
-  test("make shure that FizBuzz run N times in async loop") {
+  test("make sure that FizBuzz run N times in async loop") {
     val run = async {
        val ctr = await(IO.ref(0))
        while {

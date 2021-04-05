@@ -6,7 +6,7 @@
 ## cats-effects:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.1.0"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.2.0"  
 ```
 
 
@@ -33,7 +33,7 @@ def doSomething(): IO[T] = async[IO] {
 ## scalaz IO:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-scalaz" % "0.1.0"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-scalaz" % "0.2.0"  
 ```
   * IO - cps.monads.scalaz.scalazIO  (implements CpsTryMonad)
 

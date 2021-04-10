@@ -31,5 +31,8 @@ given urioZioConversion[R1,R2<:R1,E]: CpsMonadConversion[[X]=>>ZIO[R1,Nothing,X]
            uriot
 
 
+given urioRioConversion[R1,R2<:R1]: CpsMonadConversion[[X]=>>ZIO[R1,Nothing,X],[X]=>>RIO[R2,X]] with
 
+   def apply[T](mf: CpsMonad[[X]=>>ZIO[R1,Nothing,X]], mg: CpsMonad[[X]=>>RIO[R2,X]], uriot:URIO[R1,T]): RIO[R2, T] =
+           uriot
 

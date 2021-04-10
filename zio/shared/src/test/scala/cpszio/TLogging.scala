@@ -30,6 +30,9 @@ object TLog {
   def logOp(op:String): RIO[TLogging, Unit] =
     ZIO.accessM(_.get.logOp(op))
 
+  def logMsg(msg:String): RIO[TLogging, Unit] =
+    ZIO.accessM(_.get.logMsg(msg))
+
   def logThrowable(ex: Throwable): RIO[TLogging, Unit] =
     ZIO.accessM(_.get.logThrowable(ex))
    

@@ -40,18 +40,26 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
   )
 
 
-/*
-// yet not ready
-lazy val zio  = project
+lazy val zio  = crossProject(JSPlatform, JVMPlatform)   
   .in(file("zio"))
   .settings(
     commonSettings,
     name := "cps-async-connect-zio",
+    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+    libraryDependencies += "dev.zio" %%% "zio" % "0.0.0+1-4732439f-SNAPSHOT",
+  ).jsSettings(
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
+    scalaJSUseMainModuleInitializer := true,
+    libraryDependencies ++= Seq(
+      "io.github.cquiroz" %%% "scala-java-time" % "2.0.0",
+      "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.0.0"
+    )
+  ).jvmSettings(
   )
-*/
 
 lazy val root = (project in file("."))
-                .aggregate(scalaz.jvm, scalaz.js, catsEffect.jvm, catsEffect.js)
+                .aggregate(scalaz.jvm, scalaz.js, catsEffect.jvm, catsEffect.js,
+                           zio.jvm)
                 .settings(
                    publish := {},
                    publishLocal := {},

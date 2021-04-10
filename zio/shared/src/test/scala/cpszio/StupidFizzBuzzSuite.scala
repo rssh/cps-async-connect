@@ -31,8 +31,13 @@ class StupidFizzBuzzSuite extends FunSuite {
     val r = program.provideLayer( ZLayer.succeed(logService) )
     Runtime.default.unsafeRunToFuture(r).map{ logs =>
             println(s"logs=$logs")
-            //assert(logs(0)==TLogging.OpRecord("createRef"))
-            //assert(logs(1)==TLogging.OpRecord("getDate"))
+            assert(logs(0)==TLogging.MsgRecord("0"))
+            assert(logs(1)==TLogging.MsgRecord("fizz"))
+            assert(logs(2)==TLogging.MsgRecord("buzz"))
+            assert(logs(3)==TLogging.MsgRecord("1"))
+            assert(logs(4)==TLogging.MsgRecord("2"))
+            assert(logs(5)==TLogging.MsgRecord("3"))
+            assert(logs(6)==TLogging.MsgRecord("fizz"))
          }
 
   }

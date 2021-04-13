@@ -83,7 +83,7 @@ given ThrowableAdapter[R] with
 ```
 
 
-  * ZIO  -  `asyncZIO[R,E]` as shortcat for `async[[X]=>>ZIO[R,E,X]]` (implements CpsAsyncMonad with conversion to Future if we havei given Runtime in scope.)
+  * ZIO  -  `asyncZIO[R,E]` as shortcat for `async[[X]=>>ZIO[R,E,X]]` (implements `CpsAsyncMonad` with conversion to `Future` if we have given `Runtime` in scope.)
   * RIO  -  use asyncRIO[R]  (implements CpsAsyncMonad with conversion)
   * Task  -  use async[Task]  (implements CpsAsyncMonad with conversion)
   * URIO  -  use asyncURIO[R]  (implements CpsMonad)

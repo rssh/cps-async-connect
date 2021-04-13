@@ -66,4 +66,8 @@ given zioThrowableToE[R1,R2 <: R1, ET <: Throwable, E](using ThrowableAdapter[R2
 
 
 
+given futureZIOConversion[R, E](using zio.Runtime[R], ThrowableAdapter[R,E]):CpsMonadConversion[[X]=>>ZIO[R,E,X],Future] with
+
+   override def apply[T](mf: CpsMonad[[X]=>>ZIO[R,E,X]], mg: CpsMonad[Future], ft:ZIO[R,E,T]): Future[T]  =
+        summon[Runtime[R]].unsafeRunToFuture(ft.mapError(e => summon[ThrowableAdapter[R,E]].toThrowable(e)))
 

@@ -36,3 +36,9 @@ given urioRioConversion[R1,R2<:R1]: CpsMonadConversion[[X]=>>ZIO[R1,Nothing,X],[
    def apply[T](mf: CpsMonad[[X]=>>ZIO[R1,Nothing,X]], mg: CpsMonad[[X]=>>RIO[R2,X]], uriot:URIO[R1,T]): RIO[R2, T] =
            uriot
 
+
+
+transparent inline def asyncURIO[R]: Async.InferAsyncArg[[X]=>>URIO[R,X]] =
+   new Async.InferAsyncArg[[X]=>>URIO[R,X]](using URIOCpsMonad[R])
+
+

@@ -9,7 +9,7 @@ import zio.clock._
 import munit.*
 
 
-case class RichError(ex:Throwable, lastOp: Option[String], supressed:List[Throwable]=List())
+case class RichError(ex:Throwable, lastOp: Option[String])
 
 given richErrorAdapter[R <: TLogging] : ThrowableAdapter[ R, RichError] with
 
@@ -18,7 +18,10 @@ given richErrorAdapter[R <: TLogging] : ThrowableAdapter[ R, RichError] with
 
    def fromThrowable[A](e:Throwable): ZIO[ R, RichError, A] =
         for{
-           op <- TLog.lastOp().mapError(exLastOp => RichError(e,None,List(exLastOp)))
+           op <- TLog.lastOp().mapError{exLastOp => 
+                      e.addSuppressed(exLastOp)
+                      RichError(e,None)
+                 }
            r <-  ZIO.fail(RichError(e,op))
         } yield r
      

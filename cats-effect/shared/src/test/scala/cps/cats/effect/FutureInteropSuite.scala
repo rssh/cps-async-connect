@@ -34,7 +34,7 @@ class FutureInteropSuite extends CatsEffectSuite {
 
   }
 
-  test("make shure that IO async can adopt Future") {
+  test("make sure that IO async can adopt Future") {
      val futureApi = new FutureBasedAPI()
      val ioApi = new IOBasedAPI()
      val run = async[IO] {
@@ -45,7 +45,7 @@ class FutureInteropSuite extends CatsEffectSuite {
      run
   }
 
-  test("make shure that Future async can adopt IO") {
+  test("make sure that Future async can adopt IO") {
      val futureApi = new FutureBasedAPI()
      val ioApi = new IOBasedAPI()
      val run = async[Future] {
@@ -56,7 +56,7 @@ class FutureInteropSuite extends CatsEffectSuite {
      IO.fromFuture(IO.pure(run))
   }
 
-  test("make shure that F:Async async can adopt Future") {
+  test("make sure that F:Async async can adopt Future") {
     val futureApi = new FutureBasedAPI()
     def genericFun[F[_]:Async]():F[Int] = async[F] {
        val taglessApi = new TaglessFinalAPI[F]()
@@ -71,7 +71,7 @@ class FutureInteropSuite extends CatsEffectSuite {
     run
   }
 
-  test("make shure that F:Async is callable from IO") {
+  test("make sure that F:Async is callable from IO") {
     val futureApi = new FutureBasedAPI()
     val ioApi = new IOBasedAPI()
     def genericFun[F[_]:Async]():F[Int] = async[F] {
@@ -91,27 +91,20 @@ class FutureInteropSuite extends CatsEffectSuite {
     run 
   }
 
-  /*
-  test("make shure that F:Async is callable from Future") {
+  
+  test("make sure tagless API wrapped in IO is callable from Future") {
+     val futureApi = new FutureBasedAPI()
+     val run = async[Future] {
+        val taglessApi = new TaglessFinalAPI[IO]()
+        val x = await(futureApi.getX)
+        val z = await(taglessApi.getZ)
+        val r = x + z
+        assert(r == 4)
+     }
+     run
   }
-  */
 
-  /*
-  test("make shure that F:Async async can run in non-io monad") {
-    import _root_.cats.implicits._
-    val futureApi = new FutureBasedAPI()
-    def genericFun[F[_]:Async]():F[Int] = async[F] {
-       val taglessApi = new TaglessFinalAPI[F]()
-       val x = await(futureApi.getX)
-       val z = await(taglessApi.getZ)
-       val r = x + z
-       assert(r == 4)
-       r
-    }
-    val run = genericFun[]()
-    IO.fromFuture(IO.pure(run))
-  }
-  */
+
 
 }
 

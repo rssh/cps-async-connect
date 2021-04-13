@@ -69,15 +69,17 @@ or for task:
 
 ```
 
-for ZIO you should have given ThrowableAdapter[R,E] which will map E and Throwables.
+for ZIO with custom error `E` you should have given `ThrowableAdapter[R,E]` which will map `E` and `Throwable` in both directions.
 
 ```scala
 case class MyError(...)
 
 given ThrowableAdapter[R] with
 
-     def toThrowable(e: MyError): Throwable =
-        ...
+     def toThrowable(e: MyError): Throwable = ...
+        
+     def fromThrowable[A](e:Throwable): ZIO[R,E,A] = ...
+
 ```
 
 

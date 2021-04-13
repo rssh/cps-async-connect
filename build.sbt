@@ -1,8 +1,6 @@
 val dottyVersion = "3.0.0-RC2"
-//val dottyVersion = "0.28.0-bin-20200907-101e620-NIGHTLY"
-//val dottyVersion = dottyLatestNightlyBuild.get
 
-ThisBuild/version := "0.3.0-SNAPSHOT"
+ThisBuild/version := "0.3.0"
 ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(
@@ -45,8 +43,7 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     name := "cps-async-connect-zio",
-    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    libraryDependencies += "dev.zio" %%% "zio" % "0.0.0+1-4732439f-SNAPSHOT",
+    libraryDependencies += "dev.zio" %%% "zio" % "1.0.6",
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     scalaJSUseMainModuleInitializer := true,

@@ -40,9 +40,42 @@ class StupidFizzBuzzSuite extends FunSuite {
             assert(logs(4)==TLogging.MsgRecord("2"))
             assert(logs(5)==TLogging.MsgRecord("3"))
             assert(logs(6)==TLogging.MsgRecord("fizz"))
+            assert(logs(7)==TLogging.MsgRecord("4"))
          }
-
   }
+
+   /*  
+   test("make sure that FizBuzz run N times in async loop with automatic coloring") {
+
+      import cps.automaticColoring.given
+
+      val program = asyncRIO[TLogging] {
+         val ctr = Ref.make(0)
+         while {
+            val v = ctr.get
+            TLog.logMsg(v.toString)
+            if v % 3 == 0 then 
+               TLog.logMsg("fizz")
+            if v % 5 == 0 then 
+               TLog.logMsg("buzz")
+            ctr.update(_ + 1)
+            v < 10 
+         } do ()
+         await(TLog.lastRecords(20))
+      }
+
+      val logService: TLogging.Service = new TLoggingImpl.Service
+      val r = program.provideLayer( ZLayer.succeed(logService) )
+      Runtime.default.unsafeRunToFuture(r).map{ logs =>
+         println(s"logs=$logs")
+         assert(logs(0)==TLogging.MsgRecord("0"))
+         assert(logs(1)==TLogging.MsgRecord("fizz"))
+         assert(logs(6)==TLogging.MsgRecord("fizz"))
+         assert(logs(7)==TLogging.MsgRecord("4"))
+      }
+
+   }
+   */
 
 
 }

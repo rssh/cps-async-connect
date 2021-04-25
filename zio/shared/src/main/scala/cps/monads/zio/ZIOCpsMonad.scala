@@ -71,3 +71,11 @@ given futureZIOConversion[R, E](using zio.Runtime[R], ThrowableAdapter[R,E]):Cps
    override def apply[T](mf: CpsMonad[[X]=>>ZIO[R,E,X]], mg: CpsMonad[Future], ft:ZIO[R,E,T]): Future[T]  =
         summon[Runtime[R]].unsafeRunToFuture(ft.mapError(e => summon[ThrowableAdapter[R,E]].toThrowable(e)))
 
+
+given zioMemoization[R,E]: CpsMonadPureMemoization[[X]=>>ZIO[R,E,X]] with 
+
+   def apply[T](ft:ZIO[R,E,T]):ZIO[R,E, ZIO[R,E,T]] =
+      ft.memoize
+
+
+//inline transient

@@ -25,3 +25,11 @@ given throwableForThrowable[R, X <: Throwable]: ThrowableAdapter[R, X] with
           ZIO.fail(e.asInstanceOf[X])
 
 
+given throwableForNothing[R]: ThrowableAdapter[R, Nothing] with 
+
+    def toThrowable(e: Nothing): Throwable = e
+
+    def fromThrowable[A](e: Throwable): ZIO[R, Nothing, A] =
+         // impossibe by definition.
+         throw e
+   

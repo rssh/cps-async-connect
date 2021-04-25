@@ -49,5 +49,11 @@ given catsMonadThrow[F[_]](using MonadThrow[F]): CpsTryMonad[F] = CatsMonadThrow
 
 given catsAsync[F[_]](using Async[F]): CpsAsyncMonad[F] = CatsAsync[F]()
 
+given catsMemoization[F[_]](using Concurrent[F]) :CpsMonadPureMemoization[F] with
+    
+  def apply[T](ft:F[T]): F[F[T]] =
+    summon[Concurrent[F]].memoize(ft)
+
+inline transparent given catsValueDiscard[F[_]](using Async[F]): ValueDiscard[F[Unit]] = AwaitValueDiscard[F,Unit]
 
 

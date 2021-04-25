@@ -1,14 +1,15 @@
-val dottyVersion = "3.0.0-RC2"
+val dottyVersion = "3.0.0-RC3"
 
-ThisBuild/version := "0.3.0"
+ThisBuild/version := "0.4.0"
 ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.5.0",
-   libraryDependencies += "org.scalameta" %%% "munit" % "0.7.23" % Test,
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.6.1",
+   libraryDependencies += "org.scalameta" %%% "munit" % "0.7.25" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )
+
 
 lazy val scalaz  = crossProject(JSPlatform, JVMPlatform)
   .in(file("scalaz"))
@@ -29,8 +30,8 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     name := "cps-async-connect-cats-effect",
-    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.0.1",
-    libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % "1.0.1" % Test
+    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.1.0",
+    libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % "1.0.2" % Test
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     scalaJSUseMainModuleInitializer := true
@@ -43,7 +44,7 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     name := "cps-async-connect-zio",
-    libraryDependencies += "dev.zio" %%% "zio" % "1.0.6",
+    libraryDependencies += "dev.zio" %%% "zio" % "1.0.7",
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     scalaJSUseMainModuleInitializer := true,
@@ -54,9 +55,10 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
   ).jvmSettings(
   )
 
+
 lazy val root = (project in file("."))
-                .aggregate(scalaz.jvm, scalaz.js, catsEffect.jvm, catsEffect.js,
-                           zio.jvm)
+                .aggregate(catsEffect.jvm, catsEffect.js,
+                           zio.jvm)     // scalaz have no version for scala-3.0.0-RC3 yet
                 .settings(
                    publish := {},
                    publishLocal := {},

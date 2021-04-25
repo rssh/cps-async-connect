@@ -13,7 +13,8 @@ class StupidFizzBuzzSuite extends FunSuite {
   import concurrent.ExecutionContext.Implicits.global
 
   test("make sure that FizBuzz run N times in async loop") {
-    val program = asyncRIO[TLogging] {
+ 
+   val program = asyncRIO[TLogging] {
        val ctr = await(Ref.make(0))
        while {
           val v = await(ctr.get)
@@ -27,6 +28,7 @@ class StupidFizzBuzzSuite extends FunSuite {
        } do ()
        await(TLog.lastRecords(20))
     }
+  
     val logService: TLogging.Service = new TLoggingImpl.Service
     val r = program.provideLayer( ZLayer.succeed(logService) )
     Runtime.default.unsafeRunToFuture(r).map{ logs =>

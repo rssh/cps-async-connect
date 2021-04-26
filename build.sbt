@@ -5,7 +5,7 @@ ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.6.1",
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.7.0-SNAPSHOT",
    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.25" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )
@@ -53,6 +53,8 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
       "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.0.0"
     )
   ).jvmSettings(
+    scalacOptions ++= Seq( "-unchecked", "-Ydebug-trace", "-Ydebug-names", "-Xprint-types",
+                            "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms"  )
   )
 
 

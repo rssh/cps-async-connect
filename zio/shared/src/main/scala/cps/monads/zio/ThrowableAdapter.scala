@@ -9,13 +9,6 @@ trait ThrowableAdapter[-R,E]:
    def fromThrowable[A](e:Throwable): ZIO[R,E,A]
 
 
-given ThrowableAdapter[Any, Throwable] with
-
-   def toThrowable(e: Throwable): Throwable = e
-
-   def fromThrowable[A](e: Throwable): ZIO[Any, Throwable, A] = 
-          ZIO.fail(e)
-
 
 // TODO:  rething, mb change to static check
 given throwableForThrowable[R, X <: Throwable]: ThrowableAdapter[R, X] with
@@ -24,12 +17,3 @@ given throwableForThrowable[R, X <: Throwable]: ThrowableAdapter[R, X] with
    def fromThrowable[A](e: Throwable): ZIO[R, X, A] = 
           ZIO.fail(e.asInstanceOf[X])
 
-
-given throwableForNothing[R]: ThrowableAdapter[R, Nothing] with 
-
-    def toThrowable(e: Nothing): Throwable = e
-
-    def fromThrowable[A](e: Throwable): ZIO[R, Nothing, A] =
-         // impossibe by definition.
-         throw e
-   

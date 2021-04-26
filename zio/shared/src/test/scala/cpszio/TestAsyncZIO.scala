@@ -11,12 +11,14 @@ import munit.*
 
 case class RichError(ex:Throwable, lastOp: Option[String])
 
-given richErrorAdapter[R <: TLogging] : ThrowableAdapter[ R, RichError] with
+object RichError:
 
-   def toThrowable(e:RichError): Throwable =
-      e.ex
+   given richErrorAdapter[R <: TLogging] : ThrowableAdapter[R, RichError] with
 
-   def fromThrowable[A](e:Throwable): ZIO[ R, RichError, A] =
+      def toThrowable(e:RichError): Throwable =
+         e.ex
+
+      def fromThrowable[A](e:Throwable): ZIO[ R, RichError, A] =
         for{
            op <- TLog.lastOp().mapError{exLastOp => 
                       e.addSuppressed(exLastOp)

@@ -6,7 +6,7 @@
 ## cats-effects:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.3.0"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.4.0"  
 ```
 
 
@@ -43,7 +43,7 @@ def doSomething(): IO[T] = async[IO] {
 ## zio:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-zio" % "0.3.0"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-zio" % "0.4.0"  
 ```
 
 Usage:

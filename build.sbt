@@ -1,12 +1,12 @@
-val dottyVersion = "3.0.0-RC3"
+val dottyVersion = "3.0.0"
 
-ThisBuild/version := "0.4.0"
+ThisBuild/version := "0.5.0"
 ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.7.0-SNAPSHOT",
-   libraryDependencies += "org.scalameta" %%% "munit" % "0.7.25" % Test,
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.7.0",
+   libraryDependencies += "org.scalameta" %%% "munit" % "0.7.26" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )
 
@@ -30,8 +30,8 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     name := "cps-async-connect-cats-effect",
-    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.1.0",
-    libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % "1.0.2" % Test
+    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.1.1",
+    libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % "1.0.3" % Test
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     scalaJSUseMainModuleInitializer := true
@@ -59,8 +59,8 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
 
 
 lazy val root = (project in file("."))
-                .aggregate(catsEffect.jvm, catsEffect.js,
-                           zio.jvm)     // scalaz have no version for scala-3.0.0-RC3 yet
+                .aggregate(catsEffect.jvm, catsEffect.js
+                           )     // zio.jvm, scalaz have no version for scala-3.0.0-RC3 yet
                 .settings(
                    publish := {},
                    publishLocal := {},

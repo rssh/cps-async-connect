@@ -6,7 +6,7 @@
 ## cats-effects:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.4.0"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.5.0"  
 ```
 
 

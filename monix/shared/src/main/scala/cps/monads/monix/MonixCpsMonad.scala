@@ -35,3 +35,13 @@ given MonixCpsMonad: CpsTryMonad[Task] with
 given futureToTask[T]:Conversion[Future[T],Task[T]] = (ft) => Task.fromFuture(ft)
 
 given taskToFuture[T](using Scheduler): Conversion[Task[T],Future[T]] = _.runToFuture
+
+
+given taskMemoization :CpsMonadInplaceMemoization[Task] with
+    
+  def apply[T](ft:Task[T]): Task[T] =
+      ft.memoize
+
+inline transparent given taskValueDiscard: ValueDiscard[Task[Unit]] = AwaitValueDiscard[Task,Unit]
+
+

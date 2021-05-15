@@ -34,37 +34,33 @@ class StupidFizzBuzzSuite extends FunSuite {
     run.map{logs =>
       assert(logs(0)=="0")
       assert(logs(6)=="fizz")
-      //IO.println(logs)
+      //println(logs)
     }.runToFuture
   }
 
-  /*
   test("make sure that FizBuzz run N times in async loop with automatic coloring") {
     import cps.automaticColoring.given
     val run = async {
        val logger = ToyLogger.make()
-       val ctr = IO.ref(0)
+       val ctr = Atomic(0)
        while {
-          //await(IO.sleep(100.millisecond))
-          val v = ctr.get
-          logger.log(await(v).toString)
+          val v = ctr.get()
+          logger.log(v.toString)
           if v % 3 == 0 then 
              logger.log("fizz")
           if v % 5 == 0 then 
              logger.log("buzz")
-          ctr.update(_ + 1)
+          ctr += 1
           v < 10 
        } do ()
        await(logger.all())
     }
-    run.flatMap{logs =>
+    run.map{logs =>
       assert(logs(0)=="0")
       assert(logs(6)=="fizz")
-      //IO.println(logs)
-      IO.unit
-    }
+      //println(logs)
+    }.runToFuture
   }
-   */
 
 }
 

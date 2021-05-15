@@ -8,7 +8,7 @@ class ToyLogger:
 
 
   var lines = Vector.empty[String]
-  lazy val localScheduler = Scheduler.singleThread(name="monix-toy-logger")
+  lazy val localScheduler = SingleThreadScheduler()
 
 
   def log(message: String):Task[Unit] =

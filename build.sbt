@@ -1,6 +1,6 @@
 val dottyVersion = "3.0.0"
 
-ThisBuild/version := "0.6.0-SNAPSHOT"
+ThisBuild/version := "0.5.1"
 ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(
@@ -72,7 +72,7 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
 
 
 lazy val root = (project in file("."))
-                .aggregate(catsEffect.jvm, catsEffect.js,
+                .aggregate( // catsEffect.jvm, catsEffect.js, -- in 0.5.1 publish only monix
                            monix.jvm, monix.js
                            )     // zio.jvm, scalaz have no version for scala-3.0.0-RC3 yet
                 .settings(

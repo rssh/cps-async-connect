@@ -30,6 +30,27 @@ def doSomething(): IO[T] = async[IO] {
   * Generic `F[_]:MonadThrow` - catsMonadThrow (implements CpsTryMonad)
   * Generic `F[_]:Monad` - catsMonad (implements CpsMonad)
 
+# monix:
+
+```
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-monix" % "0.5.1"  
+```
+
+
+Usage:
+
+```scala
+import cps._
+import cps.monads.monix.given
+import monix.eval.Task
+
+...
+def doSomething(): Task[T] = async[Task] {
+   ...
+}
+
+```
+
 
 ## scalaz IO:
 

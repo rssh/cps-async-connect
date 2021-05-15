@@ -1,6 +1,6 @@
 val dottyVersion = "3.0.0"
 
-ThisBuild/version := "0.5.0"
+ThisBuild/version := "0.6.0-SNAPSHOT"
 ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(
@@ -38,6 +38,17 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
   ).jvmSettings(
   )
 
+lazy val monix  = crossProject(JSPlatform, JVMPlatform)
+  .in(file("monix"))
+  .settings(
+    commonSettings,
+    name := "cps-async-connect-monix",
+    libraryDependencies += "io.monix" %%% "monix" % "3.4.0",
+  ).jsSettings(
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
+    scalaJSUseMainModuleInitializer := true
+  ).jvmSettings(
+  )
 
 lazy val zio  = crossProject(JSPlatform, JVMPlatform)   
   .in(file("zio"))
@@ -58,8 +69,11 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
   )
 
 
+
+
 lazy val root = (project in file("."))
-                .aggregate(catsEffect.jvm, catsEffect.js
+                .aggregate(catsEffect.jvm, catsEffect.js,
+                           monix.jvm, monix.js
                            )     // zio.jvm, scalaz have no version for scala-3.0.0-RC3 yet
                 .settings(
                    publish := {},

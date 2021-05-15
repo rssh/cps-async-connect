@@ -1,6 +1,6 @@
 
 
- This is a helper connect objects for providing [dotty-cps-async](http://https://github.com/rssh/dotty-cps-async) CpsAsyncMonad typeclasses for common effect stacks.
+ This is a helper connect objects for providing [dotty-cps-async](https://github.com/rssh/dotty-cps-async) CpsAsyncMonad typeclasses for common effect stacks.
 
 
 ## cats-effects:

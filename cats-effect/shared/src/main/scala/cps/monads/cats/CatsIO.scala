@@ -21,9 +21,9 @@ class CatsIOCpsAsyncMonad extends CatsAsync[IO] with CpsAsyncMonad[IO]:
 given catsIO: CpsAsyncMonad[IO] = CatsIOCpsAsyncMonad()
 
 
-given ioToFutureConversion[T](using runtime: unsafe.IORuntime): Conversion[IO[T],Future[T]] with
+given ioToFutureConversion(using runtime: unsafe.IORuntime): CpsMonadConversion[IO,Future] with
 
-   def apply(io:IO[T]): Future[T] =
+   def apply[T](io:IO[T]): Future[T] =
                io.unsafeToFuture() 
 
 

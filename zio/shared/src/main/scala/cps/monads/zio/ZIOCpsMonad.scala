@@ -56,10 +56,10 @@ transparent inline def asyncRIO[R]: Async.InferAsyncArg[[X]=>>RIO[R,X]] =
    new Async.InferAsyncArg[[X]=>>RIO[R,X]](using ZIOCpsMonad[R, Throwable])
 
 
-given zioToZio[R1,R2<:R1,E1,E2,T](using ThrowableAdapter[R1,E1], ThrowableAdapter[R2,E2]): 
-                                                         Conversion[ZIO[R1,E1,T], ZIO[R2,E2,T]] with
+given zioToZio[R1,R2<:R1,E1,E2](using ThrowableAdapter[R1,E1], ThrowableAdapter[R2,E2]): 
+                                                         CpsMonadConversion[[T] =>> ZIO[R1,E1,T], [T]=>>ZIO[R2,E2,T]] with
 
-    def apply(ft:ZIO[R1,E1,T]): ZIO[R2,E2,T]=
+    def apply[T](ft:ZIO[R1,E1,T]): ZIO[R2,E2,T]=
         val r1: ZIO[R2,E2,T] = ft.foldM(
           e1 => {
               val ex = summon[ThrowableAdapter[R1,E1]].toThrowable(e1)
@@ -72,9 +72,10 @@ given zioToZio[R1,R2<:R1,E1,E2,T](using ThrowableAdapter[R1,E1], ThrowableAdapte
 
                                 
 
-given futureZIOConversion[R,E,T](using zio.Runtime[R], ThrowableAdapter[R,E]):Conversion[ZIO[R,E,T],Future[T]] with
+given futureZIOConversion[R,E](using zio.Runtime[R], ThrowableAdapter[R,E]):
+                                       CpsMonadConversion[[T]=>>ZIO[R,E,T],Future] with
 
-   def apply(ft:ZIO[R,E,T]): Future[T]  =
+   def apply[T](ft:ZIO[R,E,T]): Future[T]  =
         summon[Runtime[R]].unsafeRunToFuture(ft.mapError(e => summon[ThrowableAdapter[R,E]].toThrowable(e)))
 
 

@@ -32,9 +32,11 @@ given MonixCpsMonad: CpsTryMonad[Task] with
       fa.materialize.flatMap(f)     
 
 
-given futureToTask[T]:Conversion[Future[T],Task[T]] = (ft) => Task.fromFuture(ft)
+given futureToTask: CpsMonadConversion[Future,Task] with
+    def apply[T](ft: Future[T]): Task[T] = Task.fromFuture(ft)
 
-given taskToFuture[T](using Scheduler): Conversion[Task[T],Future[T]] = _.runToFuture
+given taskToFuture(using Scheduler): CpsMonadConversion[Task,Future] with
+    def apply[T](ft: Task[T]):Future[T] = ft.runToFuture
 
 
 given taskMemoization :CpsMonadInplaceMemoization[Task] with

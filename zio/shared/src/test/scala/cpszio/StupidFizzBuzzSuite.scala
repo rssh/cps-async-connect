@@ -1,9 +1,9 @@
 package cpszio
 
 
-import zio._
-import munit._
-import concurrent.duration._
+import zio.*
+import munit.*
+import concurrent.duration.*
 
 import cps.*
 import cps.monads.zio.{given,*}

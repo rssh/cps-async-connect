@@ -1,11 +1,11 @@
 val dottyVersion = "3.0.0"
 
-ThisBuild/version := "0.5.1"
+ThisBuild/version := "0.6.0-SNAPSHOT"
 ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.7.0",
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.8.0-SNAPSHOT",
    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.26" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )
@@ -55,13 +55,13 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     name := "cps-async-connect-zio",
-    libraryDependencies += "dev.zio" %%% "zio" % "1.0.7",
+    libraryDependencies += "dev.zio" %%% "zio" % "1.0.8",
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
-      "io.github.cquiroz" %%% "scala-java-time" % "2.0.0",
-      "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.0.0"
+      "io.github.cquiroz" %%% "scala-java-time" % "2.3.0",
+      "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.3.0"
     )
   ).jvmSettings(
     scalacOptions ++= Seq( "-unchecked", "-Ydebug-trace", "-Ydebug-names", "-Xprint-types",
@@ -72,9 +72,10 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
 
 
 lazy val root = (project in file("."))
-                .aggregate( // catsEffect.jvm, catsEffect.js, -- in 0.5.1 publish only monix
-                           monix.jvm, monix.js
-                           )     // zio.jvm, scalaz have no version for scala-3.0.0-RC3 yet
+                .aggregate( catsEffect.jvm, catsEffect.js, //-- in 0.5.1 publish only monix
+                           monix.jvm, monix.js,
+                           zio.jvm, // zio.js   // scalaz have no version for scala-3.0.0-RC3 yet
+                )
                 .settings(
                    publish := {},
                    publishLocal := {},

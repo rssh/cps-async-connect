@@ -1,11 +1,11 @@
 val dottyVersion = "3.0.0"
 
-ThisBuild/version := "0.6.0-SNAPSHOT"
+ThisBuild/version := "0.6.0"
 ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.8.0-SNAPSHOT",
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.8.1",
    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.26" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )
@@ -72,9 +72,10 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
 
 
 lazy val root = (project in file("."))
-                .aggregate( catsEffect.jvm, catsEffect.js, //-- in 0.5.1 publish only monix
+                .aggregate( catsEffect.jvm, catsEffect.js,
                            monix.jvm, monix.js,
-                           zio.jvm, // zio.js   // scalaz have no version for scala-3.0.0-RC3 yet
+                           scalaz.jvm, scalaz.js , 
+                           zio.jvm //, zio.js  - link error on start
                 )
                 .settings(
                    publish := {},

@@ -6,7 +6,7 @@
 ## cats-effects:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.5.0"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.6.0"  
 ```
 
 
@@ -33,7 +33,7 @@ def doSomething(): IO[T] = async[IO] {
 # monix:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-monix" % "0.5.1"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-monix" % "0.6.0"  
 ```
 
 
@@ -55,7 +55,7 @@ def doSomething(): Task[T] = async[Task] {
 ## scalaz IO:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-scalaz" % "0.3.0"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-scalaz" % "0.6.0"  
 ```
 
   * IO - cps.monads.scalaz.scalazIO  (implements CpsTryMonad)
@@ -64,7 +64,7 @@ def doSomething(): Task[T] = async[Task] {
 ## zio:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-zio" % "0.4.0"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-zio" % "0.6.0"  
 ```
 
 Usage:

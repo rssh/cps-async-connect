@@ -8,7 +8,7 @@ import munit.CatsEffectSuite
 import concurrent.duration._
 
 import cps._
-import cps.monads.cats.given
+import cps.monads.catsEffect.given
 
 
 class StupidFizzBuzzSuite extends CatsEffectSuite {

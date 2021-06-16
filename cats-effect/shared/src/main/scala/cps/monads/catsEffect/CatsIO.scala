@@ -1,4 +1,4 @@
-package cps.monads.cats
+package cps.monads.catsEffect
 /*
  * (C) Ruslan Shevchenko <ruslan@shevchenko.kiev.ua>
  * 2021
@@ -13,12 +13,12 @@ import scala.concurrent._
 /**
  * CpsAsyncMonad for cats-effect.
  **/
-class CatsIOCpsAsyncMonad extends CatsAsync[IO] with CpsAsyncMonad[IO]:
+class CatsIOCpsAsyncMonad extends CatsAsync[IO] with CpsAsyncMonad[IO] with CpsDelayMonad[IO]:
 
   type F[T] = IO[T]
 
 
-given catsIO: CpsAsyncMonad[IO] = CatsIOCpsAsyncMonad()
+given catsIO: CatsIOCpsAsyncMonad = CatsIOCpsAsyncMonad()
 
 
 given ioToFutureConversion(using runtime: unsafe.IORuntime): CpsMonadConversion[IO,Future] with

@@ -1,4 +1,3 @@
-
 package cps.cats.effect
 
 import scala.language.implicitConversions
@@ -12,7 +11,7 @@ import cats.effect.*
 import cps.*
 import cps.automaticColoring.given
 
-import cps.monads.cats.{given,*}
+import cps.monads.catsEffect.{given,*}
 
 import munit.CatsEffectSuite
 

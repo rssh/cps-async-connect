@@ -1,11 +1,12 @@
 val dottyVersion = "3.0.0"
+//val dottyVersion = "3.0.2-RC1-bin-SNAPSHOT"
 
 ThisBuild/version := "0.6.0"
 ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.8.1",
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.0-SNAPSHOT",
    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.26" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )
@@ -58,16 +59,15 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
     libraryDependencies += "dev.zio" %%% "zio" % "1.0.8",
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
-    scalaJSUseMainModuleInitializer := true,
+    //scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
       "io.github.cquiroz" %%% "scala-java-time" % "2.3.0",
       "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.3.0"
     )
   ).jvmSettings(
     scalacOptions ++= Seq( "-unchecked", "-Ydebug-trace", "-Ydebug-names", "-Xprint-types",
-                            "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms"  )
+                            "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" )
   )
-
 
 
 
@@ -75,7 +75,7 @@ lazy val root = (project in file("."))
                 .aggregate( catsEffect.jvm, catsEffect.js,
                            monix.jvm, monix.js,
                            scalaz.jvm, scalaz.js , 
-                           zio.jvm //, zio.js  - link error on start
+                           zio.jvm, //, zio.js  - link error on start
                 )
                 .settings(
                    publish := {},

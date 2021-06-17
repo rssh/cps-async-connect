@@ -5,7 +5,7 @@ import zio._
 import scala.util._
 import scala.concurrent._
 
-class ZIOCpsMonad[R, E](using ThrowableAdapter[R,E]) extends CpsAsyncMonad[[X]=>>ZIO[R,E,X]]:
+class ZIOCpsMonad[R, E](using ThrowableAdapter[R,E]) extends CpsAsyncEffectMonad[[X]=>>ZIO[R,E,X]]:
 
   type F[T] = ZIO[R,E,T]
 
@@ -33,8 +33,7 @@ class ZIOCpsMonad[R, E](using ThrowableAdapter[R,E]) extends CpsAsyncMonad[[X]=>
       }
       ZIO.effectAsync[R,E,A] { cb =>
          source(adoptZIOCallback(cb))      
-      }
-
+      }    
 
   def throwableAdaper: ThrowableAdapter[R,E] =
       summon[ThrowableAdapter[R,E]]
@@ -43,13 +42,13 @@ class ZIOCpsMonad[R, E](using ThrowableAdapter[R,E]) extends CpsAsyncMonad[[X]=>
 
 object TaskCpsMonad extends ZIOCpsMonad[Any,Throwable]
 
-given CpsAsyncMonad[Task] = TaskCpsMonad
+given CpsAsyncEffectMonad[Task] = TaskCpsMonad
 
 //given rioCpsMonad[R] : CpsAsyncMonad[[X]=>>RIO[R,X]] = ZIOCpsMonad[R,Throwable]
 
 given zioCpsMonad[R,E](using ThrowableAdapter[R,E]): ZIOCpsMonad[R,E] = ZIOCpsMonad[R,E]
 
-transparent inline def asyncZIO[R,E](using CpsAsyncMonad[[X]=>>ZIO[R,E,X]]): Async.InferAsyncArg[[X]=>>ZIO[R,E,X]] =
+transparent inline def asyncZIO[R,E](using CpsAsyncEffectMonad[[X]=>>ZIO[R,E,X]]): Async.InferAsyncArg[[X]=>>ZIO[R,E,X]] =
    new Async.InferAsyncArg[[X]=>>ZIO[R,E,X]]
 
 transparent inline def asyncRIO[R]: Async.InferAsyncArg[[X]=>>RIO[R,X]] =

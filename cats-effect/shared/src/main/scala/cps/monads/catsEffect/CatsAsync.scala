@@ -31,7 +31,7 @@ class CatsMonadThrow[F[_]](using MonadThrow[F]) extends CatsMonad[F] with CpsTry
     summon[MonadThrow[F]].redeemWith(fa)( ex => f(Failure(ex)), a => f(Success(a)) )
 
 
-class CatsAsync[F[_]](using Async[F]) extends CatsMonadThrow[F] with CpsAsyncMonad[F] with CpsDelayMonad[F]:
+class CatsAsync[F[_]](using Async[F]) extends CatsMonadThrow[F] with CpsAsyncEffectMonad[F]:
 
   def adoptCallbackStyle[A](source: (Try[A]=>Unit) => Unit): F[A] =
     def adoptIOCallback(ioCallback: Either[Throwable, A]=>Unit): Try[A]=>Unit = {
@@ -42,15 +42,12 @@ class CatsAsync[F[_]](using Async[F]) extends CatsMonadThrow[F] with CpsAsyncMon
       ioCallback => source(adoptIOCallback(ioCallback))
     }
 
-  def delayedUnit: F[Unit] = {
-    summon[Async[F]].delay(())
-  }
 
 given catsMonad[F[_]](using Monad[F]): CpsMonad[F] = CatsMonad[F]()
 
 given catsMonadThrow[F[_]](using MonadThrow[F]): CpsTryMonad[F] = CatsMonadThrow[F]()
 
-given catsAsync[F[_]](using Async[F]): CpsAsyncMonad[F] = CatsAsync[F]()
+given catsAsync[F[_]](using Async[F]): CpsAsyncEffectMonad[F] = CatsAsync[F]()
 
 given catsMemoization[F[_]](using Concurrent[F]) :CpsMonadPureMemoization[F] with
     

@@ -17,8 +17,6 @@ import munit.CatsEffectSuite
 
 class LazyEffectSuite extends CatsEffectSuite {
 
-  import TestFuns.*
-  
   test("make sure that async expressions are not evaluating early") {
     //implicit val printCode = cps.macroFlags.PrintCode
     var x = 0

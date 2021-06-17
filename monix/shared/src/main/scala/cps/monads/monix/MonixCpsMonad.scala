@@ -15,7 +15,7 @@ import scala.concurrent.*
 /**
  * CpsMonad for Monix Task
  **/
-given MonixCpsMonad: CpsTryMonad[Task] with
+given MonixCpsMonad: CpsTryMonad[Task] with CpsDelayMonad[Task] with
 
   def pure[T](t:T): Task[T] = Task.pure(t)
 
@@ -30,6 +30,14 @@ given MonixCpsMonad: CpsTryMonad[Task] with
 
   def flatMapTry[A,B](fa: Task[A])(f: Try[A]=>Task[B]): Task[B] =
       fa.materialize.flatMap(f)     
+
+  def adoptCallbackStyle[A](source: (Try[A]=>Unit)=>Unit): Task[A] =
+      Task.async{ 
+         callback => source(r => callback.apply(r))
+      }
+
+  def delayedUnit: Task[Unit] =
+      Task.eval(())
 
 
 given futureToTask: CpsMonadConversion[Future,Task] with

@@ -1,4 +1,4 @@
-val dottyVersion = "3.0.0"
+val dottyVersion = "3.0.1-RC2"
 //val dottyVersion = "3.0.2-RC1-bin-SNAPSHOT"
 
 ThisBuild/version := "0.6.0"
@@ -56,7 +56,7 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     name := "cps-async-connect-zio",
-    libraryDependencies += "dev.zio" %%% "zio" % "1.0.8",
+    libraryDependencies += "dev.zio" %%% "zio" % "1.0.9",
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     //scalaJSUseMainModuleInitializer := true,

@@ -1,6 +1,7 @@
 package cps.monads.zio
 
 import cps._
+import cps.macros._
 import zio._
 import scala.util._
 import scala.concurrent._
@@ -49,7 +50,7 @@ given CpsAsyncEffectMonad[Task] = TaskCpsMonad
 given zioCpsMonad[R,E](using ThrowableAdapter[R,E]): ZIOCpsMonad[R,E] = ZIOCpsMonad[R,E]
 
 transparent inline def asyncZIO[R,E](using CpsAsyncEffectMonad[[X]=>>ZIO[R,E,X]]): Async.InferAsyncArg[[X]=>>ZIO[R,E,X]] =
-   new Async.InferAsyncArg[[X]=>>ZIO[R,E,X]]
+   new cps.macros.Async.InferAsyncArg[[X]=>>ZIO[R,E,X]]
 
 transparent inline def asyncRIO[R]: Async.InferAsyncArg[[X]=>>RIO[R,X]] =
    new Async.InferAsyncArg[[X]=>>RIO[R,X]](using ZIOCpsMonad[R, Throwable])

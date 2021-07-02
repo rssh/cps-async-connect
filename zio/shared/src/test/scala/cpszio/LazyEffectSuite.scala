@@ -14,7 +14,7 @@ class LazyEffectSuite extends FunSuite {
 
   test("zio: make sure that evaluation of async expression is delayed") {
 
-     implicit val printCode = cps.macroFlags.PrintCode
+     implicit val printCode = cps.macros.flags.PrintCode
      var x = 0
      val c = async[Task] {
        x = 1

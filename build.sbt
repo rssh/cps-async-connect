@@ -1,12 +1,12 @@
-val dottyVersion = "3.0.1-RC2"
+val dottyVersion = "3.0.1"
 //val dottyVersion = "3.0.2-RC1-bin-SNAPSHOT"
 
-ThisBuild/version := "0.6.0"
+ThisBuild/version := "0.7.0"
 ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.0-SNAPSHOT",
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.0",
    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.26" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )

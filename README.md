@@ -52,10 +52,10 @@ async[F] {
      file.write(data)
   }
 }
-
-
+```
 
 instead
+
 ```
  await(r.use{
     fetchData().map(data => f.write(data))

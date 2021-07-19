@@ -6,7 +6,7 @@
 ## cats-effects:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.6.0"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.7.0"  
 ```
 
 
@@ -30,10 +30,40 @@ def doSomething(): IO[T] = async[IO] {
   * Generic `F[_]:MonadThrow` - catsMonadThrow (implements CpsTryMonad)
   * Generic `F[_]:Monad` - catsMonad (implements CpsMonad)
 
+Also implemented pseudo-synchronious interface for resources, i.e. for `r:Resource[F,A]` it is possible to write:
+
+```scala
+async[F] {
+  .......
+  using(r){ file =>
+    val data = await(fetchData())
+    file.write(data)
+  }
+} 
+```
+
+or
+
+async[F] {
+  ....
+  r.useOn{file =>
+     val data = await(fetchData())
+     file.write(data)
+  }
+}
+
+
+instead
+```
+ await(r.use{
+    fetchData().map(data => f.write(data))
+ })  
+```
+
 # monix:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-monix" % "0.6.0"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-monix" % "0.7.0"  
 ```
 
 
@@ -109,5 +139,16 @@ given ThrowableAdapter[R] with
   * Task  -  use async[Task]  (implements CpsAsyncMonad with conversion)
   * URIO  -  use asyncURIO[R]  (implements CpsMonad)
   
+Also implement `using` pseudo-syntax for ZManaged: 
+
+```
+asyncRIO[R] {
+  val managedResource = Managed.make(Queue.unbounded[Int])(_.shutdown)
+  using(managedResource) { queue =>
+     doSomething()  // can use awaits inside.
+  }
+
+}
+```
 
 

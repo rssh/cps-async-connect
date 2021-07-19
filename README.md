@@ -44,6 +44,7 @@ async[F] {
 
 or
 
+```scala
 async[F] {
   ....
   r.useOn{file =>
@@ -51,6 +52,7 @@ async[F] {
      file.write(data)
   }
 }
+
 
 
 instead

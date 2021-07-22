@@ -17,11 +17,7 @@ import cps.*
  * Monadic operations over F[] with brackets,  can be used as main monad in case of deeple nested resources,
  * to avoid nesting of scopes.
  *
- * async[[X]=>>Resource[IO,X]] {
- *     val reader = await(openFile(input))
- *     val writer = await(openFile(output))
- *     writer.writeAll(reader)
- * }
+ *@see asyncScope
  **/
 class ResourceCpsMonad[F[_]](using cm: MonadCancel[F, Throwable]) extends CpsTryMonad[[A]=>>Resource[F,A]]:
 
@@ -72,5 +68,30 @@ given resourceConversion[F[_]]: CpsMonadConversion[F, [A] =>> Resource[F,A]] =
         def apply[T](ft:F[T]):Resource[F,T] = Resource.eval(ft)
     }
 
+/**
+ * part of asyncScope
+ *@see asyncScope
+ */
+class AsyncScopeInferArg[F[_]](using CpsTryMonad[[A]=>>Resource[F,A]], MonadCancel[F,Throwable]) {
 
+    transparent inline def apply[T](inline body: T):F[T] =
+            async[[X]=>>Resource[F,X]].apply(body).use(t=>summon[MonadCancel[F,Throwable]].pure(t))
+
+}
+
+/**
+ * Produce effect with resource-aware scope block. 
+ *
+ * ```
+ * val effect = asyncScope[IO] {
+ *     val reader = await(openFile(input))
+ *     val writer = await(openFile(output))
+ *     writer.transformFrom(0,Long.MaxValue,reader)
+ * }
+ * ```
+ * Here evaluation of effect will open reader and wrier, transfer data and then close reader and writer.
+ * block inside asyncScope evaluated in CpsResourceMonad[[X]=>>Resource[F,X]]
+ *@see [cps.monads.catsEffect.CpsResourceMonad]
+ */
+def asyncScope[F[_]](using CpsTryMonad[[A]=>>Resource[F,A]], MonadCancel[F,Throwable]) = AsyncScopeInferArg[F]()
 

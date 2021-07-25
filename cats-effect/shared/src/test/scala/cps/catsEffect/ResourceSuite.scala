@@ -1,4 +1,4 @@
-package cps.cats.effecct
+package cps.catsEffecct
 
 import scala.concurrent.duration._
 import scala.collection.mutable.ArrayBuffer

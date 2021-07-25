@@ -1,4 +1,4 @@
-package cps.cats.effect
+package cps.catsEffect
 
 
 import cats.effect.{IO, SyncIO}

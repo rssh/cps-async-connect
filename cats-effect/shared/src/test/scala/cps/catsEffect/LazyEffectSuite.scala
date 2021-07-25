@@ -1,4 +1,4 @@
-package cps.cats.effect
+package cps.catsEffect
 
 import scala.language.implicitConversions
 import scala.util.*

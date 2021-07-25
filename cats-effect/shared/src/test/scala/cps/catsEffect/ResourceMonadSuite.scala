@@ -81,6 +81,7 @@ class ResourceMonadSuite extends CatsEffectSuite {
 
     test("use cats resource as scope with automaticColoring") {
       import cps.automaticColoring.given
+      import scala.language.implicitConversions
       val prg = asyncScope[IO] {
           val input = createDataEmu("AAA AC")
           val output = createFileEmu("output")

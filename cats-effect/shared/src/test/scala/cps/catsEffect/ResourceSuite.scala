@@ -41,7 +41,7 @@ class ResourceSuite extends CatsEffectSuite {
         val prg = async[IO] {
             val r = makeWriterEmu()
             val ctr = await(IO.ref(0))
-            using(r) { a => 
+            Resource.using(r) { a => 
                 val c0 = await(ctr.get)
                 a.write(s"AAA-${c0}")
                 await(ctr.update(_ + 1))

@@ -18,6 +18,8 @@ import java.nio.file.Paths
 import java.nio.file.Files
 import java.nio.file.{OpenOption, StandardOpenOption}
 
+import cps.automaticColoring.given
+import scala.language.implicitConversions
 
 
 
@@ -31,9 +33,9 @@ class FileChannelResourceSuite extends CatsEffectSuite {
     test("use cats resource") {
         import StandardOpenOption.*
         val prg = asyncScope[IO] {
-            val input = await(openFileChannel(Paths.get("cats-effect/jvm/src/test/resources/input"),READ))
+            val input = openFileChannel(Paths.get("cats-effect/jvm/src/test/resources/input"),READ)
             val outputName = Files.createTempFile("output",null)
-            val output = await(openFileChannel(outputName,WRITE, CREATE, TRUNCATE_EXISTING))
+            val output = openFileChannel(outputName,WRITE, CREATE, TRUNCATE_EXISTING)
             (output.transferFrom(input,0,Long.MaxValue), outputName)
         }
         prg.map{ 

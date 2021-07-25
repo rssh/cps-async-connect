@@ -35,9 +35,10 @@ Also implemented pseudo-synchronious interface for resources, i.e. for `r:Resour
 ```scala
 async[F] {
   .......
-  using(r){ file =>
-    val data = await(fetchData())
-    file.write(data)
+  Resource.using(r1,r2){ file1, file2 =>
+    val data = await(fetchData(url))
+    file1.write(data)
+    file1.write(s"data fetched from $url")
   }
 } 
 ```
@@ -146,7 +147,7 @@ Also implement `using` pseudo-syntax for ZManaged:
 ```
 asyncRIO[R] {
   val managedResource = Managed.make(Queue.unbounded[Int])(_.shutdown)
-  using(managedResource) { queue =>
+  ZManaged.using(managedResource, secondResource) { queue =>
      doSomething()  // can use awaits inside.
   }
 

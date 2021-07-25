@@ -1,7 +1,7 @@
 val dottyVersion = "3.0.1"
 //val dottyVersion = "3.0.2-RC1-bin-SNAPSHOT"
 
-ThisBuild/version := "0.8.0-SNAPSHOT"
+ThisBuild/version := "0.8.0"
 ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(

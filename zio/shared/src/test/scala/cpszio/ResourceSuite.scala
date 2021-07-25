@@ -41,7 +41,7 @@ class ResourceSuite extends FunSuite {
         val prg = async[Task] {
             val r = makeWriterEmu()
             val ctr = await(Ref.make(0))
-            using(r) { a => 
+            ZManaged.using(r) { a => 
                 val c0 = await(ctr.get)
                 a.write(s"AAA-${c0}")
                 await(ctr.update(_ + 1))

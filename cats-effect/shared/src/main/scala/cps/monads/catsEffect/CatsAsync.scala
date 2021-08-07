@@ -54,6 +54,7 @@ given catsMemoization[F[_]](using Concurrent[F]) :CpsMonadPureMemoization[F] wit
   def apply[T](ft:F[T]): F[F[T]] =
     summon[Concurrent[F]].memoize(ft)
 
-inline transparent given catsValueDiscard[F[_]](using Async[F]): ValueDiscard[F[Unit]] = AwaitValueDiscard[F,Unit]
+inline transparent given catsUnitValueDiscard[F[_]](using Async[F]): ValueDiscard[F[Unit]] = AwaitValueDiscard[F,Unit]
+inline transparent given catsIntValueDiscard[F[_]](using Async[F]): ValueDiscard[F[Int]] = AwaitValueDiscard[F,Int]
 
 

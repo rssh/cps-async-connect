@@ -13,7 +13,7 @@ import scala.concurrent._
 /**
  * CpsAsyncMonad for cats-effect.
  **/
-class CatsIOCpsAsyncMonad extends CatsAsync[IO] with CpsAsyncEffectMonad[IO]:
+class CatsIOCpsAsyncMonad extends CatsConcurrent[IO]:
 
   type F[T] = IO[T]
 

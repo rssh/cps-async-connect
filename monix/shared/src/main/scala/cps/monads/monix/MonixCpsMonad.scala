@@ -15,7 +15,9 @@ import scala.concurrent.*
 /**
  * CpsMonad for Monix Task
  **/
-given MonixCpsMonad: CpsAsyncEffectMonad[Task] with
+given MonixCpsMonad: CpsConcurrentEffectMonad[Task] with
+
+  override type Spawned[A] = Fiber[A]
 
   def pure[T](t:T): Task[T] = Task.pure(t)
 
@@ -35,6 +37,15 @@ given MonixCpsMonad: CpsAsyncEffectMonad[Task] with
       Task.async{ 
          callback => source(r => callback.apply(r))
       }
+
+  def spawnEffect[A](op: => Task[A]) =
+     op.start
+
+  def join[A](fiber: Fiber[A]) = fiber.join
+
+  def tryCancel[A](op: Fiber[A]): Task[Unit] =
+    op.cancel
+
 
 
 

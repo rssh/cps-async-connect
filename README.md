@@ -25,7 +25,7 @@ def doSomething(): IO[T] = async[IO] {
 
  or import specific class to allow compiler to deduce given monad automatically.
 
-  * IO  -  catsIO  (implements CpsAsyncMonad with conversion to Future)
+  * IO  -  catsIO  (implements CpsConcurrentEffectMonad with conversion to Future)
   * Generic `F[_]:Async` - catsAsync (implements CpsAsyncMonad)
   * Generic `F[_]:MonadThrow` - catsMonadThrow (implements CpsTryMonad)
   * Generic `F[_]:Monad` - catsMonad (implements CpsMonad)
@@ -97,7 +97,7 @@ def doSomething(): Task[T] = async[Task] {
 ## zio:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-zio" % "0.6.0"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-zio" % "0.8.1"  
 ```
 
 Usage:

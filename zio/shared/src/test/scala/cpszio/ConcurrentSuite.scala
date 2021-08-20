@@ -1,13 +1,20 @@
-package cps.monixtest
+package cpszio
 
-import cps.*
-import cps.monads.monix.{given,*}
-import monix.eval.*
+import zio._
+import munit._
+
+import scala.concurrent._
+import scala.concurrent.duration._
+
+import cps._
+import cps.monads.given
+import cps.monads.zio.{given,*}
 import java.util.concurrent.atomic.AtomicInteger
 
-import munit.*
 
-class ConcurrentSuite extends FunSuite {
+import scala.concurrent.ExecutionContext.Implicits.global
+
+class ConcurrentSuite extends munit.FunSuite {
 
   test("basic concurrent test") {
 
@@ -15,10 +22,10 @@ class ConcurrentSuite extends FunSuite {
         val m = summon[CpsConcurrentEffectMonad[Task]]
         val x = new AtomicInteger(0)
         val fiber1 = await(m.spawnEffect{
-           Task.now{ x.incrementAndGet() }
+           Task.effect{ x.incrementAndGet() }
         })
         val fiber2 = await(m.spawnEffect{
-          Task.now{ x.incrementAndGet() }
+          Task.effect{ x.incrementAndGet() }
         })
         val y1 = await(m.join(fiber1))
         val y2 = await(m.join(fiber2))
@@ -26,9 +33,6 @@ class ConcurrentSuite extends FunSuite {
      }
 
   }
-
-  // TODO: add test for cancel.
-  
 
 
 }

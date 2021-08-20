@@ -6,9 +6,11 @@ import zio._
 import scala.util._
 import scala.concurrent._
 
-class ZIOCpsMonad[R, E](using ThrowableAdapter[R,E]) extends CpsAsyncEffectMonad[[X]=>>ZIO[R,E,X]]:
+class ZIOCpsMonad[R, E](using ThrowableAdapter[R,E]) extends CpsConcurrentEffectMonad[[X]=>>ZIO[R,E,X]]:
 
   type F[T] = ZIO[R,E,T]
+
+  type Spawned[T] = Fiber[E,T]
 
   def pure[A](x:A):ZIO[R,E,A] = ZIO.succeed(x)
 
@@ -36,6 +38,16 @@ class ZIOCpsMonad[R, E](using ThrowableAdapter[R,E]) extends CpsAsyncEffectMonad
          source(adoptZIOCallback(cb))      
       }    
 
+  def spawnEffect[A](op: =>F[A]):ZIO[R,E,Spawned[A]] =
+      op.fork
+
+  def join[A](op: Fiber[E,A]) =
+      op.join
+
+  def tryCancel[A](op: Fiber[E,A]):F[Unit] =
+      op.interrupt.map(_ => ()) 
+
+
   def throwableAdaper: ThrowableAdapter[R,E] =
       summon[ThrowableAdapter[R,E]]
 
@@ -43,13 +55,13 @@ class ZIOCpsMonad[R, E](using ThrowableAdapter[R,E]) extends CpsAsyncEffectMonad
 
 object TaskCpsMonad extends ZIOCpsMonad[Any,Throwable]
 
-given CpsAsyncEffectMonad[Task] = TaskCpsMonad
+given CpsConcurrentEffectMonad[Task] = TaskCpsMonad
 
 //given rioCpsMonad[R] : CpsAsyncMonad[[X]=>>RIO[R,X]] = ZIOCpsMonad[R,Throwable]
 
 given zioCpsMonad[R,E](using ThrowableAdapter[R,E]): ZIOCpsMonad[R,E] = ZIOCpsMonad[R,E]
 
-transparent inline def asyncZIO[R,E](using CpsAsyncEffectMonad[[X]=>>ZIO[R,E,X]]): Async.InferAsyncArg[[X]=>>ZIO[R,E,X]] =
+transparent inline def asyncZIO[R,E](using CpsConcurrentEffectMonad[[X]=>>ZIO[R,E,X]]): Async.InferAsyncArg[[X]=>>ZIO[R,E,X]] =
    new cps.macros.Async.InferAsyncArg[[X]=>>ZIO[R,E,X]]
 
 transparent inline def asyncRIO[R]: Async.InferAsyncArg[[X]=>>RIO[R,X]] =

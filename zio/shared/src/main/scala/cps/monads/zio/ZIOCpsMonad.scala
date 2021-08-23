@@ -91,11 +91,11 @@ given futureZIOConversion[R,E](using zio.Runtime[R], ThrowableAdapter[R,E]):
         summon[Runtime[R]].unsafeRunToFuture(ft.mapError(e => summon[ThrowableAdapter[R,E]].toThrowable(e)))
 
 
-given zioMemoization[R,E]: CpsMonadDynamicMemoization[[X]=>>ZIO[R,E,X]] with {}
+given zioMemoization[R,E]: CpsMonadMemoization.Dynamic[[X]=>>ZIO[R,E,X]] with {}
 
  
 
-given zioDynamicMemoizationAp[R1,E1,R2>:R1,E2<:E1,T]: CpsMonadDynamicMemoizationAp[[X]=>>ZIO[R1,E1,X],T,ZIO[R2,E2,T]] with      
+given zioDynamicMemoizationAp[R1,E1,R2>:R1,E2<:E1,T]: CpsMonadMemoization.DynamicAp[[X]=>>ZIO[R1,E1,X],T,ZIO[R2,E2,T]] with      
 
    def apply(ft:ZIO[R2,E2,T]):ZIO[R1,E1,ZIO[R2,E2,T]] =
         ft.memoize

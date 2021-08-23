@@ -6,7 +6,7 @@ ThisBuild/organization := "com.github.rssh"
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.2",
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.3-SNAPSHOT",
    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.27" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )
@@ -39,6 +39,7 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
   ).jvmSettings(
   )
 
+
 lazy val monix  = crossProject(JSPlatform, JVMPlatform)
   .in(file("monix"))
   .settings(
@@ -69,13 +70,26 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
                             "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" )
   )
 
+lazy val streamFs2 = crossProject(JSPlatform, JVMPlatform)
+                     .in(file("stream-fs2"))
+                     .dependsOn(catsEffect)
+                     .settings(
+                         commonSettings,
+                         name := "cps-async-connect-fs2",
+                         libraryDependencies ++= Seq(
+                             "co.fs2" %%% "fs2-core" % "3.1.0",
+                             "org.typelevel" %%% "munit-cats-effect-3" % "1.0.5" % Test
+                         )
+                      )
+
 
 
 lazy val root = (project in file("."))
                 .aggregate( catsEffect.jvm, catsEffect.js,
                            monix.jvm, monix.js,
                            scalaz.jvm, scalaz.js , 
-                           zio.jvm,  zio.js  
+                           zio.jvm,  zio.js,
+                           streamFs2.jvm, streamFs2.js
                 )
                 .settings(
                    publish := {},

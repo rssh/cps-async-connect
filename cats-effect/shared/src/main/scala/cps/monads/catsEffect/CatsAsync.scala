@@ -79,7 +79,7 @@ given catsAsync[F[_]](using Async[F], NotGiven[Concurrent[F]]): CpsAsyncEffectMo
 
 given catsConcurrent[F[_]](using Concurrent[F], Async[F]): CpsConcurrentEffectMonad[F] = CatsConcurrent[F]()
 
-given catsMemoization[F[_]](using Concurrent[F]) :CpsMonadPureMemoization[F] with
+given catsMemoization[F[_]](using Concurrent[F]) :CpsMonadMemoization.Pure[F] with
     
   def apply[T](ft:F[T]): F[F[T]] =
     summon[Concurrent[F]].memoize(ft)

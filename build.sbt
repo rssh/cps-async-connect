@@ -85,6 +85,14 @@ lazy val streamFs2 = crossProject(JSPlatform, JVMPlatform)
                          )
                       )
 
+lazy val streamAkka = (project in file("stream-akka")).
+                      settings(
+                         commonSettings,
+                         name := "cps-async-connect-akka-stream",
+                         libraryDependencies ++= Seq(
+                            ("com.typesafe.akka" %% "akka-stream" % "2.6.16").cross(CrossVersion.for3Use2_13)
+                         )
+                      )
 
 
 lazy val root = (project in file("."))
@@ -92,7 +100,8 @@ lazy val root = (project in file("."))
                            monix.jvm, monix.js,
                            scalaz.jvm, scalaz.js , 
                            zio.jvm,  zio.js,
-                           streamFs2.jvm, streamFs2.js
+                           streamFs2.jvm, streamFs2.js,
+                           streamAkka
                 )
                 .settings(
                    publish := {},

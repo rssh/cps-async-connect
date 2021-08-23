@@ -57,7 +57,10 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     name := "cps-async-connect-zio",
-    libraryDependencies += "dev.zio" %%% "zio" % "1.0.10",
+    libraryDependencies ++= Seq(
+      "dev.zio" %%% "zio" % "1.0.10",
+      "dev.zio" %%% "zio-streams" % "1.0.10",
+    )
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     //scalaJSUseMainModuleInitializer := true,

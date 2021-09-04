@@ -1,6 +1,6 @@
 
 
- This is a helper connect objects for providing [dotty-cps-async](https://github.com/rssh/dotty-cps-async) CpsAsyncMonad typeclasses for common effect stacks.
+ This is a helper connect objects for providing [dotty-cps-async](https://github.com/rssh/dotty-cps-async) CpsAsyncMonad typeclasses for common effect stacks and streaming libraries.
 
 
 ## cats-effects:
@@ -73,13 +73,28 @@ instead
 Usage:
 
 ```scala
-import cps._
+import cps.*
 import cps.monads.monix.given
 import monix.eval.Task
 
 ...
 def doSomething(): Task[T] = async[Task] {
    ...
+}
+
+```
+
+```scala
+import cps.*
+import monix.*
+import monix.reactive.*
+import cps.monads.monix.given
+import cps.stream.monix.given
+
+def intStream() = asyncStream[Observable[Int]] { out =>
+    for(i <- 1 to N) {
+       out.emit(i)
+    }
 }
 
 ```
@@ -123,19 +138,6 @@ or for task:
 
 ```
 
-for ZIO with custom error `E` you should have given `ThrowableAdapter[R,E]` which will map `E` and `Throwable` in both directions.
-
-```scala
-case class MyError(...)
-
-given ThrowableAdapter[R] with
-
-     def toThrowable(e: MyError): Throwable = ...
-        
-     def fromThrowable[A](e:Throwable): ZIO[R,E,A] = ...
-
-```
-
 
   * ZIO  -  `asyncZIO[R,E]` as shortcat for `async[[X]=>>ZIO[R,E,X]]` (implements `CpsAsyncMonad` with conversion to `Future` if we have given `Runtime` in scope.)
   * RIO  -  use asyncRIO[R]  (implements CpsAsyncMonad with conversion)
@@ -153,5 +155,37 @@ asyncRIO[R] {
 
 }
 ```
+
+And generator syntax for ZStream:
+
+```
+val stream = asyncStream[Stream[Throwable,Int]] { out =>
+       for(i <- 1 to N) {
+         out.emit(i)
+       }
+}
+```
+
+
+## akka-streams
+
+
+```
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-akka-stream" % "0.8.2"  
+```
+
+Generator syntax for akka source.
+
+
+## fs2 streams
+
+```
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-fs2 % "0.8.2"  
+```
+
+Generator syntax for fs2
+
+
+
 
 

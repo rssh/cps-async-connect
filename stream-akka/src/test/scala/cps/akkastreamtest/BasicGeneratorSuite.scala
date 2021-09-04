@@ -40,7 +40,7 @@ class BasicGeneratorSuite extends FunSuite {
 
   }
 
-  test("exception should break loop: monix") {
+  test("exception should break loop: akka-stream") {
     val source = asyncStream[Source[Int,NotUsed]] { out =>
       for(i <- 1 to N) {
         if (i == N/2) then

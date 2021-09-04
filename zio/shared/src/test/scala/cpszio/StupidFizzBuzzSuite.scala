@@ -8,6 +8,7 @@ import concurrent.duration.*
 import cps.*
 import cps.monads.zio.{given,*}
 
+
 class StupidFizzBuzzSuite extends FunSuite {
 
   import concurrent.ExecutionContext.Implicits.global
@@ -63,7 +64,6 @@ class StupidFizzBuzzSuite extends FunSuite {
    
    }
 
-
    
    test("make sure that FizBuzz run N times in async loop with automatic coloring") {
 
@@ -104,10 +104,4 @@ class StupidFizzBuzzSuite extends FunSuite {
    }
    
    
-   
-   
-   
-
-
 }
-

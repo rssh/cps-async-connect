@@ -18,7 +18,7 @@ import scala.concurrent._
  *   }
  * ```
  **/
-class ZManagedCpsMonad[R, E](using ThrowableAdapter[R,E]) extends CpsTryMonad[[X]=>>ZManaged[R,E,X]]:
+class ZManagedCpsMonad[R, E] extends CpsTryMonad[[X]=>>ZManaged[R,E,X]]:
 
   type F[T] = ZManaged[R,E,T]
 
@@ -31,17 +31,14 @@ class ZManagedCpsMonad[R, E](using ThrowableAdapter[R,E]) extends CpsTryMonad[[X
       fa.flatMap(f)
 
   def error[A](e: Throwable): F[A] = 
-      ZManaged.fromEffect(summon[ThrowableAdapter[R,E]].fromThrowable[A](e))
+      ZManaged.fromEffect(GenericThrowableAdapter.fromThrowable(e))
 
   def flatMapTry[A, B](fa: F[A])(f: util.Try[A] => F[B]): F[B] =
       fa.foldM(
-          e => f(Failure(summon[ThrowableAdapter[R,E]].toThrowable(e))),
+          e => f(Failure(GenericThrowableAdapter.toThrowable(e))),
           a => f(Success(a))
       )
            
-
-  def throwableAdaper: ThrowableAdapter[R,E] =
-      summon[ThrowableAdapter[R,E]]
 
 
 
@@ -50,7 +47,7 @@ object TaskManagedCpsMonad extends ZManagedCpsMonad[Any,Throwable]
 given CpsTryMonad[TaskManaged] = TaskManagedCpsMonad
 
 
-given zManagedCpsMonad[R,E](using ThrowableAdapter[R,E]): ZManagedCpsMonad[R,E] = ZManagedCpsMonad[R,E]
+given zManagedCpsMonad[R,E]: ZManagedCpsMonad[R,E] = ZManagedCpsMonad[R,E]
 
 transparent inline def asyncZManaged[R,E](using CpsTryMonad[[X]=>>ZManaged[R,E,X]]): Async.InferAsyncArg[[X]=>>ZManaged[R,E,X]] =
    new cps.macros.Async.InferAsyncArg[[X]=>>ZManaged[R,E,X]]
@@ -59,7 +56,7 @@ transparent inline def asyncRManaged[R]: Async.InferAsyncArg[[X]=>>RManaged[R,X]
    new Async.InferAsyncArg[[X]=>>RManaged[R,X]](using ZManagedCpsMonad[R, Throwable])
 
 
-given zioToZManaged[R1,R2<:R1,E1,E2>:E1](using ThrowableAdapter[R1,E1], ThrowableAdapter[R2,E2]): 
+given zioToZManaged[R1,R2<:R1,E1,E2>:E1]: 
                                           CpsMonadConversion[[T] =>> ZIO[R1,E1,T], 
                                                              [T]=>> ZManaged[R2,E2,T]] with
 

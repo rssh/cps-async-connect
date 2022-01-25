@@ -24,9 +24,9 @@ given resourceConversion[F[_]]: CpsMonadConversion[F, [A] =>> Resource[F,A]] =
  * part of asyncScope
  *@see asyncScope
  */
-class AsyncScopeInferArg[F[_]](using CpsTryMonad[[A]=>>Resource[F,A]], MonadCancel[F,Throwable]) {
+class AsyncScopeInferArg[F[_],C <: CpsMonadContext[[A]=>>Resource[F,A]]](using am: CpsTryMonad.Aux[[A]=>>Resource[F,A],C], mc: MonadCancel[F,Throwable]) {
 
-    transparent inline def apply[T](inline body: T):F[T] =
+    transparent inline def apply[T](inline body: C ?=> T):F[T] =
             async[[X]=>>Resource[F,X]].apply(body).use(t=>summon[MonadCancel[F,Throwable]].pure(t))
 
 }
@@ -45,7 +45,7 @@ class AsyncScopeInferArg[F[_]](using CpsTryMonad[[A]=>>Resource[F,A]], MonadCanc
  * block inside asyncScope evaluated in CpsResourceMonad[[X]=>>Resource[F,X]]
  *@see [cps.monads.catsEffect.CpsResourceMonad]
  */
-def asyncScope[F[_]](using CpsTryMonad[[A]=>>Resource[F,A]], MonadCancel[F,Throwable]) = AsyncScopeInferArg[F]()
+def asyncScope[F[_]](using m:CpsTryMonad[[A]=>>Resource[F,A]], mc:MonadCancel[F,Throwable]) = AsyncScopeInferArg(using m, mc)
 
 given catsResourceMemoization[F[_]](using Concurrent[[X]=>>Resource[F,X]]):CpsMonadMemoization.Pure[[X]=>>Resource[F,X]] with
 

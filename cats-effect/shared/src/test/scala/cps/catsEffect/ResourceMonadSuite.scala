@@ -103,7 +103,3 @@ class ResourceMonadSuite extends CatsEffectSuite {
 
 
 }
-
-
-
-

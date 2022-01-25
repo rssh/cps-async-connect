@@ -11,7 +11,7 @@ import cps.monads.{*,given}
 import cps.stream.{*,given}
 
 
-given AkkaStreamEmitAbsorber[T](using ExecutionContext):  BaseUnfoldCpsAsyncEmitAbsorber[Source[T,NotUsed],Future,T] with 
+given AkkaStreamEmitAbsorber[T](using ExecutionContext):  BaseUnfoldCpsAsyncEmitAbsorber[Source[T,NotUsed],Future, FutureAsyncMonadAPI, T] with 
 
   override type Element = T
 

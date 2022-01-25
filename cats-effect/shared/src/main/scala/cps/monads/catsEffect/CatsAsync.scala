@@ -8,16 +8,16 @@ import scala.util._
 import scala.util.control.NonFatal
 import scala.concurrent._
 
-class CatsMonad[F[_]](using Monad[F]) extends CpsMonad[F]:
+class CatsMonad[F[_]](using mf: Monad[F]) extends CpsMonad[F] with CpsMonadInstanceContext[F]:
 
   def pure[A](a:A): F[A] =
-    summon[Monad[F]].pure(a)
+    mf.pure(a)
 
   def map[A,B](fa: F[A])(f: A => B): F[B] =
-    summon[Monad[F]].map(fa)(f)
+    mf.map(fa)(f)
 
   def flatMap[A,B](fa: F[A])(f: A => F[B]): F[B] =
-    summon[Monad[F]].flatMap(fa)(f)
+    mf.flatMap(fa)(f)
 
 
 class CatsMonadThrow[F[_]](using MonadThrow[F]) extends CatsMonad[F] with CpsTryMonad[F]:

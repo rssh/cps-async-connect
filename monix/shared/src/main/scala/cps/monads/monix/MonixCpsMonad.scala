@@ -15,7 +15,7 @@ import scala.concurrent.*
 /**
  * CpsMonad for Monix Task
  **/
-given MonixCpsMonad: CpsConcurrentEffectMonad[Task] with
+given MonixCpsMonad: CpsConcurrentEffectMonad[Task] with CpsMonadInstanceContext[Task] with
 
   override type Spawned[A] = Fiber[A]
 

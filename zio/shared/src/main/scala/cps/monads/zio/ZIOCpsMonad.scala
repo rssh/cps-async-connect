@@ -6,7 +6,15 @@ import zio._
 import scala.util._
 import scala.concurrent._
 
-class ZIOCpsMonad[R, E] extends CpsConcurrentEffectMonad[[X]=>>ZIO[R,E,X]]:
+
+class ZIOContext[R,E] extends CpsMonadContext[[X]=>>ZIO[R,E,X]] {
+
+ 
+   override def adoptAwait[A](fa:ZIO[R,E,A]):ZIO[R,E,A] = fa
+
+}
+
+class ZIOCpsMonad[R, E] extends CpsConcurrentEffectMonad[[X]=>>ZIO[R,E,X]] with CpsContextMonad[[X]=>>ZIO[R,E,X],ZIOContext[R,E]]:
 
   type F[T] = ZIO[R,E,T]
 
@@ -49,7 +57,9 @@ class ZIOCpsMonad[R, E] extends CpsConcurrentEffectMonad[[X]=>>ZIO[R,E,X]]:
   def tryCancel[A](op: Fiber[E,A]):F[Unit] =
       op.interrupt.map(_ => ()) 
 
-
+  override def applyContext[A](op: Context => ZIO[R,E,A]):ZIO[R,E,A] =
+      val ctx = new ZIOContext[R,E]
+      op(ctx)  
 
 
 //object TaskCpsMonad extends ZIOCpsMonad[Any,Throwable]
@@ -58,11 +68,11 @@ class ZIOCpsMonad[R, E] extends CpsConcurrentEffectMonad[[X]=>>ZIO[R,E,X]]:
 
 given zioCpsMonad[R,E]: ZIOCpsMonad[R,E] = ZIOCpsMonad[R,E]
 
-transparent inline def asyncZIO[R,E](using CpsConcurrentEffectMonad[[X]=>>ZIO[R,E,X]]): Async.InferAsyncArg[[X]=>>ZIO[R,E,X]] =
-   new cps.macros.Async.InferAsyncArg[[X]=>>ZIO[R,E,X]]
+transparent inline def asyncZIO[R,E](using CpsConcurrentEffectMonad[[X]=>>ZIO[R,E,X]]): Async.InferAsyncArg[[X]=>>ZIO[R,E,X],ZIOContext[R,E]] =
+   new cps.macros.Async.InferAsyncArg
 
-transparent inline def asyncRIO[R]: Async.InferAsyncArg[[X]=>>RIO[R,X]] =
-   new Async.InferAsyncArg[[X]=>>RIO[R,X]](using ZIOCpsMonad[R, Throwable])
+transparent inline def asyncRIO[R]: Async.InferAsyncArg[[X]=>>RIO[R,X], ZIOContext[R,Throwable]] =
+   new Async.InferAsyncArg(using ZIOCpsMonad[R, Throwable])
 
 
 given zioToZio[R1,R2<:R1,E1,E2>:E1]: CpsMonadConversion[[T] =>> ZIO[R1,E1,T], [T]=>>ZIO[R2,E2,T]] with

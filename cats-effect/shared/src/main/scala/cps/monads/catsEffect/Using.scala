@@ -34,7 +34,7 @@ import cps.*
  extension [F[_],A](r: Resource[F,A])(using m:CpsMonad[F], cm: MonadCancel[F,Throwable]) 
 
     //  bug or undefined specs in dotty: we can't name extension if we have method with the same name
-    transparent inline def useOn[B](inline f: A=>B): B = 
+    transparent inline def useOn[B](inline f: A=>B)(using CpsMonadContext[F]): B = 
         await(r.use(a => m.pure(f(a)) ))
 
 
@@ -54,15 +54,15 @@ import cps.*
  **/
 extension (resourceSingleton: Resource.type)
 
-     transparent inline def using[F[_],A, B](r:Resource[F,A])(inline f: A=>B)(using m:CpsMonad[F], cm: MonadCancel[F,Throwable]): B =
+     transparent inline def using[F[_],A, B](r:Resource[F,A])(inline f: A=>B)(using m:CpsMonad[F], cm: MonadCancel[F,Throwable], mc:CpsMonadContext[F]): B =
           await(r.use(a => m.pure(f(a)) ))
 
 
-     transparent inline def using[F[_],A1, A2, B](r1:Resource[F,A1], r2:Resource[F,A2])(inline f: (A1,A2)=>B)(using m:CpsMonad[F], cm: MonadCancel[F,Throwable]): B =
+     transparent inline def using[F[_],A1, A2, B](r1:Resource[F,A1], r2:Resource[F,A2])(inline f: (A1,A2)=>B)(using m:CpsMonad[F], cm: MonadCancel[F,Throwable], mc: CpsMonadContext[F]): B =
           await(r1.use(a1 => r2.use(a2 => m.pure(f(a1,a2)))))
 
 
-     transparent inline def using[F[_],A1, A2, A3, B](r1:Resource[F,A1], r2:Resource[F,A2], r3: Resource[F,A3])(inline f: (A1,A2,A3)=>B)(using m:CpsMonad[F], cm: MonadCancel[F,Throwable]): B =
+     transparent inline def using[F[_],A1, A2, A3, B](r1:Resource[F,A1], r2:Resource[F,A2], r3: Resource[F,A3])(inline f: (A1,A2,A3)=>B)(using m:CpsMonad[F], cm: MonadCancel[F,Throwable], mc: CpsMonadContext[F]): B =
           await(r1.use(a1 => r2.use(a2 => r3.use(a3 => m.pure(f(a1,a2,a3))))))
 
 

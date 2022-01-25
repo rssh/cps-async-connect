@@ -64,6 +64,7 @@ class AsyncFileChannelResourceSuite extends CatsEffectSuite {
     test("use cats resource with AsynchronousFileChannel") {
         import StandardOpenOption.*
         implicit val printCode = cps.macros.flags.PrintCode
+        implicit val debugLavel = cps.macros.flags.DebugLevel(20) 
         val prg = asyncScope[IO] {
             val input = openAsyncFileChannel(Paths.get("cats-effect/jvm/src/test/resources/input"),READ)
              val outputName = Files.createTempFile("output-async",null)

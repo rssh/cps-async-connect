@@ -6,7 +6,7 @@ import scalaz.effect._
 
 import scala.util.Try
 
-given scalazIO: CpsTryMonad[IO] with
+given scalazIO: CpsTryMonad[IO] with CpsMonadInstanceContext[IO] with
 
    type F[T] = IO[T]
 

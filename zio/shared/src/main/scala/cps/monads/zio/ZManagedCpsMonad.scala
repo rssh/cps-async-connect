@@ -6,11 +6,6 @@ import zio._
 import scala.util._
 import scala.concurrent._
 
-class ZManagedContext[R,E](zctx: ZIOContext[R,E]) extends CpsMonadContext[[X]=>>ZManaged[R,E,X]] {
-       
-    override def adoptAwait[A](fa:ZManaged[R,E,A]):ZManaged[R,E,A] = fa
-
-}
 
 /**
  * CpsMonad which encapsulate effects with automatic resource management.
@@ -24,7 +19,7 @@ class ZManagedContext[R,E](zctx: ZIOContext[R,E]) extends CpsMonadContext[[X]=>>
  *   }
  * ```
  **/
-class ZManagedCpsMonad[R, E] extends CpsTryMonad[[X]=>>ZManaged[R,E,X]] with CpsContextMonad[[X]=>>ZManaged[R,E,X], ZManagedContext[R,E]]:
+class ZManagedCpsMonad[R, E] extends CpsTryMonad[[X]=>>ZManaged[R,E,X]] with CpsMonadInstanceContext[[X]=>>ZManaged[R,E,X]]:
 
   type F[T] = ZManaged[R,E,T]
 
@@ -45,11 +40,7 @@ class ZManagedCpsMonad[R, E] extends CpsTryMonad[[X]=>>ZManaged[R,E,X]] with Cps
           a => f(Success(a))
       )
            
-  override def applyContext[A]( op: Context => ZManaged[R,E,A]): ZManaged[R,E,A] =
-      val ctx = new ZManagedContext[R,E](new ZIOContext[R,E])
-      op(ctx)
        
-
 
 
 object TaskManagedCpsMonad extends ZManagedCpsMonad[Any,Throwable]
@@ -59,10 +50,10 @@ given CpsTryMonad[TaskManaged] = TaskManagedCpsMonad
 
 given zManagedCpsMonad[R,E]: ZManagedCpsMonad[R,E] = ZManagedCpsMonad[R,E]
 
-transparent inline def asyncZManaged[R,E](using CpsTryMonad[[X]=>>ZManaged[R,E,X]]): Async.InferAsyncArg[[X]=>>ZManaged[R,E,X],ZManagedContext[R,E]] =
+transparent inline def asyncZManaged[R,E](using CpsTryMonad[[X]=>>ZManaged[R,E,X]]): Async.InferAsyncArg[[X]=>>ZManaged[R,E,X],CpsMonadInstanceContext[[X]=>>ZManaged[R,E,X]]] =
    new cps.macros.Async.InferAsyncArg
 
-transparent inline def asyncRManaged[R]: Async.InferAsyncArg[[X]=>>RManaged[R,X],ZManagedContext[R,Throwable]] =
+transparent inline def asyncRManaged[R]: Async.InferAsyncArg[[X]=>>RManaged[R,X],CpsMonadInstanceContext[[X]=>>ZManaged[R,Throwable,X]]] =
    new Async.InferAsyncArg(using ZManagedCpsMonad[R, Throwable])
 
 

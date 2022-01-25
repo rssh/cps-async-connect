@@ -10,7 +10,7 @@ import cps.stream.{*,given}
 import scala.concurrent.*
 
 
-given ZStreamEmitAbsorber[R,E,O](using ExecutionContext):  BaseUnfoldCpsAsyncEmitAbsorber[ZStream[R,E,O], [X]=>>ZIO[R,E,X], ZIOContext[R,E], O] with 
+given ZStreamEmitAbsorber[R,E,O](using ExecutionContext):  BaseUnfoldCpsAsyncEmitAbsorber[ZStream[R,E,O], [X]=>>ZIO[R,E,X], CpsMonadInstanceContext[[X]=>>ZIO[R,E,X]], O] with 
 
   override type Element = O
 

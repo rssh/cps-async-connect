@@ -63,8 +63,8 @@ class AsyncFileChannelResourceSuite extends CatsEffectSuite {
 
     test("use cats resource with AsynchronousFileChannel") {
         import StandardOpenOption.*
-        implicit val printCode = cps.macros.flags.PrintCode
-        implicit val debugLavel = cps.macros.flags.DebugLevel(20) 
+        //implicit val printCode = cps.macros.flags.PrintCode
+        //implicit val debugLavel = cps.macros.flags.DebugLevel(20) 
         val prg = asyncScope[IO] {
             val input = openAsyncFileChannel(Paths.get("cats-effect/jvm/src/test/resources/input"),READ)
              val outputName = Files.createTempFile("output-async",null)
@@ -74,7 +74,6 @@ class AsyncFileChannelResourceSuite extends CatsEffectSuite {
             var cBytes = 0
             while 
               cBytes = read(input, buffer.clear())
-              println(s"read loop, cBytes=${cBytes}")
               if (cBytes > 0) then
                   write(output, buffer)
                   nBytes += cBytes
@@ -84,7 +83,7 @@ class AsyncFileChannelResourceSuite extends CatsEffectSuite {
         }
         prg.map{ 
              (n, name) =>
-                println(s"n = $n")
+                //println(s"n = $n")
                 Files.delete(name)
                 //println(s"messages = $messages")
                 assert(n > 0)

@@ -64,7 +64,7 @@ class AsyncFileChannelResourceSuite2 extends CatsEffectSuite {
 
     test("use cats resource with AsynchronousFileChannel2") {
         import StandardOpenOption.*
-        implicit val printCode = cps.macros.flags.PrintCode
+        //implicit val printCode = cps.macros.flags.PrintCode
         val prg = asyncScope[IO] {
             val input = open(Paths.get("cats-effect/jvm/src/test/resources/input"),READ)
             val outputName = Files.createTempFile("output-async2",null)
@@ -81,7 +81,7 @@ class AsyncFileChannelResourceSuite2 extends CatsEffectSuite {
         }
         prg.map{ 
              (n, name) =>
-                println(s"n = $n")
+                //println(s"n = $n")
                 Files.delete(name)
                 //println(s"messages = $messages")
                 assert(n > 0)

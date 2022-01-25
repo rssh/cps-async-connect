@@ -40,7 +40,7 @@ class FileChannelResourceSuite extends CatsEffectSuite {
         }
         prg.map{ 
              (n, name) =>
-                println(s"n = $n")
+                //println(s"n = $n")
                 Files.delete(name)
                 //println(s"messages = $messages")
                 assert(n > 0)

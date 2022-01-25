@@ -38,7 +38,7 @@ class ResourceSuite extends FunSuite {
         ZManaged.make(ZIO.effect(new WriterEmu()))(a => ZIO.effectTotal(a.close()))
 
     test("using ZManaged") {
-        implicit val printCode = cps.macros.flags.PrintCode
+        //implicit val printCode = cps.macros.flags.PrintCode
         val prg = async[Task] {
             val r = makeWriterEmu()
             val ctr = await(Ref.make(0))

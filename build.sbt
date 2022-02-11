@@ -74,6 +74,28 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
                             "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" )
   )
 
+lazy val zio2  = crossProject(JSPlatform, JVMPlatform)   
+  .in(file("zio2"))
+  .settings(
+    commonSettings,
+    name := "cps-async-connect-zio2",
+    libraryDependencies ++= Seq(
+      "dev.zio" %%% "zio" % "2.0.0-RC2",
+      "dev.zio" %%% "zio-streams" % "2.0.0-RC2",
+    )
+  ).jsSettings(
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
+    //scalaJSUseMainModuleInitializer := true,
+    libraryDependencies ++= Seq(
+      "io.github.cquiroz" %%% "scala-java-time" % "2.4.0-M1",
+      "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.4.0-M1"
+    )
+  ).jvmSettings(
+    scalacOptions ++= Seq( "-unchecked", "-Ydebug-trace", "-Ydebug-names", "-Xprint-types",
+                            "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" )
+  )
+
+
 lazy val streamFs2 = crossProject(JSPlatform, JVMPlatform)
                      .in(file("stream-fs2"))
                      .dependsOn(catsEffect)

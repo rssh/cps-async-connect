@@ -8,6 +8,7 @@ import concurrent.duration.*
 import cps.*
 import cps.monads.zio.{given,*}
 
+/*
 class LazyEffectSuite extends FunSuite {
 
   import concurrent.ExecutionContext.Implicits.global
@@ -49,4 +50,5 @@ class LazyEffectSuite extends FunSuite {
   }
 
 }
+*/
 

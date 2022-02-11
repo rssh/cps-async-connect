@@ -6,6 +6,7 @@ import zio._
 import scala.util._
 import scala.concurrent._
 
+trait CpsTryMonadWithInstanceContext[F[_]] extends CpsTryMonad[F] with CpsMonadInstanceContext[F] 
 
 /**
  * CpsMonad which encapsulate effects with automatic resource management.
@@ -19,7 +20,7 @@ import scala.concurrent._
  *   }
  * ```
  **/
-class ZManagedCpsMonad[R, E] extends CpsTryMonad[[X]=>>ZManaged[R,E,X]] with CpsMonadInstanceContext[[X]=>>ZManaged[R,E,X]]:
+class ZManagedCpsMonad[R, E] extends CpsTryMonadWithInstanceContext[[X]=>>ZManaged[R,E,X]]:
 
   type F[T] = ZManaged[R,E,T]
 

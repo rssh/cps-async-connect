@@ -2,6 +2,7 @@ package cpszio
 
 import zio._
 
+/*
 object TLogging {
 
   sealed class LogRecord
@@ -74,4 +75,4 @@ object TLoggingImpl {
 
   }
 
-}
+}*/

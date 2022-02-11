@@ -11,7 +11,7 @@ import cps.monads.given
 import cps.monads.zio.{given,*}
 import java.util.concurrent.atomic.AtomicInteger
 
-
+/*
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ConcurrentSuite extends munit.FunSuite {
@@ -36,3 +36,4 @@ class ConcurrentSuite extends munit.FunSuite {
 
 
 }
+*/

@@ -6,9 +6,9 @@ import zio._
 import scala.util._
 import scala.concurrent._
 
+abstract class CpsConcurentEffectMonadWithInstanceContext[F[_]] extends CpsConcurrentEffectMonad[F] with CpsMonadInstanceContext[F]
 
-
-class ZIOCpsMonad[R, E] extends CpsConcurrentEffectMonad[[X]=>>ZIO[R,E,X]] with CpsMonadInstanceContext[[X]=>>ZIO[R,E,X]]:
+class ZIOCpsMonad[R, E] extends CpsConcurentEffectMonadWithInstanceContext[[X]=>>ZIO[R,E,X]]:
 
   type F[T] = ZIO[R,E,T]
 
@@ -61,14 +61,14 @@ given zioCpsMonad[R,E]: ZIOCpsMonad[R,E] = ZIOCpsMonad[R,E]()
 //object ZIOCpsMonad:
 //   given zioCpsMonad[R,E]: ZIOCpsMonad[R,E] = ZIOCpsMonad[R,E]
 
-transparent inline def asyncZIO[R,E](using ZIOCpsMonad[R,E]): Async.InferAsyncArg[[X]=>>ZIO[R,E,X],CpsMonadInstanceContext[[X]=>>ZIO[R,E,X]]] =
+transparent inline def asyncZIO[R,E](using ZIOCpsMonad[R,E]) =
    new cps.macros.Async.InferAsyncArg(using summon[ZIOCpsMonad[R,E]])
 
 //transparent inline def asyncZIO[R,E]: Async.InferAsyncArg[[X]=>>ZIO[R,E,X],CpsMonadInstanceContext[[X]=>>ZIO[R,E,X]]] =
 //   new cps.macros.Async.InferAsyncArg(using ZIOCpsMonad.zioCpsMonad)
 
 
-transparent inline def asyncRIO[R](using ZIOCpsMonad[R,Throwable]): Async.InferAsyncArg[[X]=>>RIO[R,X], CpsMonadInstanceContext[[X]=>>ZIO[R,Throwable,X]]] =
+transparent inline def asyncRIO[R](using ZIOCpsMonad[R,Throwable]) =
    new Async.InferAsyncArg(using summon[ZIOCpsMonad[R,Throwable]])
 
 

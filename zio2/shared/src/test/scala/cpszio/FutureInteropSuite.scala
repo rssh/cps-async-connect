@@ -28,7 +28,7 @@ class FutureInteropSuite extends munit.FunSuite {
 
   }
 
-  /*
+  
   test("make sure that ZIO async can adopt Future in Task") {
      val futureApi = new FutureBasedAPI()
      val zioApi = new ZIOBasedAPI()
@@ -38,38 +38,35 @@ class FutureInteropSuite extends munit.FunSuite {
        assert(x + y == 5)
      }
      Runtime.default.unsafeRunToFuture(run)
-  }*/
+  }
 
   test("make sure that ZIO async can adopt Future in RIO") {
      class Apis {
        val futureApi = new FutureBasedAPI()
        val zioApi = new ZIOBasedAPI()
      }
-     //val program = asyncRIO[Apis] {
-     val program = async[[X]=>>ZIO[Apis, Throwable, X]] {
-       val r = summon[CpsMonadContext[?]]
-       val futureApi = await(ZIO.environment[Apis]).futureApi
-       //val x = await(futureApi.getX)
-       //val y = await(ZIO.environmentWithZIO[Apis](_.get.zioApi.getY))
-       //assert(x + y == 5)
+     val program = asyncRIO[Apis] {
+       val apis = await(ZIO.environment[Apis]).get
+       val futureApi = apis.futureApi
+       val x = await(futureApi.getX)
+       val y = await(ZIO.environmentWithZIO[Apis](_.get.zioApi.getY))
+       assert(x + y == 5)
      }
      val runtime = Runtime(ZEnvironment[Apis](new Apis), RuntimeConfig.default)
      runtime.unsafeRunToFuture(program)
   }
 
-  /*
   test("make sure that Future async can adopt ZIO with given Runtime") {
      val futureApi = new FutureBasedAPI()
      val zioApi = new ZIOBasedAPI()
-     given zio.Runtime[ZEnv] = zio.Runtime.default
-     val run = async[Future] {
+     implicit val runtime = Runtime.default
+     val futurePrg = async[Future] {
        val x = await(futureApi.getX)
        val y = await(zioApi.getY)
        assert(x + y == 5)
      }
-     run
+     futurePrg
   }
-  */
 
 
 }

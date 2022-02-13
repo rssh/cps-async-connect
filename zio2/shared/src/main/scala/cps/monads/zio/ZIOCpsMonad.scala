@@ -91,12 +91,18 @@ given zioToRio[R]: CpsMonadConversion[[T] =>> ZIO[Nothing,Any,T], [T]=>>RIO[R,T]
 
                                 
 
-given futureZIOConversion[R,E](using zio.Runtime[R]):
+given futureZIOConversion[R,E](using zio.Runtime[R], ZTraceElement):
                                        CpsMonadConversion[[T]=>>ZIO[R,E,T],Future] with
 
    def apply[T](ft:ZIO[R,E,T]): Future[T]  =
         summon[Runtime[R]].unsafeRunToFuture(ft.mapError(e => GenericThrowableAdapter.toThrowable(e)))
 
+
+
+given zioFutureConversion(using ZTraceElement): CpsMonadConversion[Future,[T]=>>ZIO[Any,Throwable,T]] with
+
+   def apply[T](ft:Future[T]): ZIO[Any,Throwable,T] =
+        ZIO.fromFuture( ec => ft )
 
 given zioMemoization[R,E]: CpsMonadMemoization.Dynamic[[X]=>>ZIO[R,E,X]] with {}
 

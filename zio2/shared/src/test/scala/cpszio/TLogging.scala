@@ -2,7 +2,7 @@ package cpszio
 
 import zio._
 
-/*
+
 object TLogging {
 
   sealed class LogRecord
@@ -21,30 +21,33 @@ object TLogging {
 
 }
 
-type TLogging = Has[TLogging.Service]
 
 object TLog {
 
-  def lastOp(): RIO[TLogging, Option[String]] =
-    ZIO.accessM(_.get.lastOp())
+  def lastOp(): RIO[TLogging.Service, Option[String]] =
+    ZIO.serviceWithZIO[TLogging.Service](_.lastOp())
 
-  def logOp(op:String): RIO[TLogging, Unit] =
-    ZIO.accessM(_.get.logOp(op))
+  def logOp(op:String): RIO[TLogging.Service, Unit] =
+    ZIO.serviceWithZIO(_.logOp(op))
 
-  def logMsg(msg:String): RIO[TLogging, Unit] =
-    ZIO.accessM(_.get.logMsg(msg))
+  def logMsg(msg:String): RIO[TLogging.Service, Unit] =
+    ZIO.serviceWithZIO(_.logMsg(msg))
 
-  def logThrowable(ex: Throwable): RIO[TLogging, Unit] =
-    ZIO.accessM(_.get.logThrowable(ex))
+  def logThrowable(ex: Throwable): RIO[TLogging.Service, Unit] =
+    ZIO.serviceWithZIO(_.logThrowable(ex))
    
-  def lastRecords(n: Int): RIO[TLogging, IndexedSeq[TLogging.LogRecord]] =
-    ZIO.accessM(_.get.lastRecords(n))
+  def lastRecords(n: Int): RIO[TLogging.Service, IndexedSeq[TLogging.LogRecord]] =
+    ZIO.serviceWithZIO(_.lastRecords(n))
 
 }
+
 
 object TLoggingImpl {
 
   import TLogging._
+
+  val layer: URLayer[Any,TLogging.Service] = (()=>Service()).toLayer
+
 
   class Service extends TLogging.Service {
 
@@ -75,4 +78,4 @@ object TLoggingImpl {
 
   }
 
-}*/
+}

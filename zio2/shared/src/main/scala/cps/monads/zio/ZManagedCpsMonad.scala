@@ -51,10 +51,10 @@ given CpsTryMonad[TaskManaged] = TaskManagedCpsMonad
 
 given zManagedCpsMonad[R,E]: ZManagedCpsMonad[R,E] = ZManagedCpsMonad[R,E]
 
-transparent inline def asyncZManaged[R,E](using ZManagedCpsMonad[R,E]): Async.InferAsyncArg[[X]=>>ZManaged[R,E,X],CpsMonadInstanceContext[[X]=>>ZManaged[R,E,X]]] =
+transparent inline def asyncZManaged[R,E](using ZManagedCpsMonad[R,E]): Async.InferAsyncArg[[X]=>>ZManaged[R,E,X],CpsMonadInstanceContextBody[[X]=>>ZManaged[R,E,X]]] =
    new cps.macros.Async.InferAsyncArg
 
-transparent inline def asyncRManaged[R](using ZManagedCpsMonad[R,Throwable]): Async.InferAsyncArg[[X]=>>RManaged[R,X],CpsMonadInstanceContext[[X]=>>ZManaged[R,Throwable,X]]] =
+transparent inline def asyncRManaged[R](using ZManagedCpsMonad[R,Throwable]): Async.InferAsyncArg[[X]=>>RManaged[R,X],CpsMonadInstanceContextBody[[X]=>>ZManaged[R,Throwable,X]]] =
    new Async.InferAsyncArg
 
 

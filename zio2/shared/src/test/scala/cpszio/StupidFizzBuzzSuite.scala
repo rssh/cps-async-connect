@@ -8,14 +8,14 @@ import concurrent.duration.*
 import cps.*
 import cps.monads.zio.{given,*}
 
-/*
+
 class StupidFizzBuzzSuite extends FunSuite {
 
   import concurrent.ExecutionContext.Implicits.global
 
   test("make sure that FizBuzz run N times in async loop") {
  
-   val program = asyncRIO[TLogging] {
+   val program = asyncRIO[TLogging.Service] {
        val ctr = await(Ref.make(0))
        while {
           val v = await(ctr.get)
@@ -45,13 +45,14 @@ class StupidFizzBuzzSuite extends FunSuite {
          }
   }
 
+
    test("minimal automatic coloring") {
       import cps.automaticColoring.given
       import scala.language.implicitConversions
 
       //implicit val printCode = cps.macroFlags.PrintCode
 
-      val program = asyncRIO[TLogging] {
+      val program = asyncRIO[TLogging.Service] {
          val ctr = Ref.make(0)
          val v = await(ctr).get
          TLog.logMsg("AAA")
@@ -74,7 +75,7 @@ class StupidFizzBuzzSuite extends FunSuite {
       //implicit val printTree = cps.macroFlags.PrintTree
       //implicit val debugLevel = cps.macroFlags.DebugLevel(20)
 
-      val program = asyncRIO[TLogging] {
+      val program = asyncRIO[TLogging.Service] {
          // TODO: find issue, while ctr.get search for option.
          //  Now, let's do type ascription to force await.
          val ctr: Ref[Int] = Ref.make(0)
@@ -102,7 +103,7 @@ class StupidFizzBuzzSuite extends FunSuite {
       }
 
    }
-   
+  
    
 }
-*/
+

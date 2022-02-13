@@ -1,4 +1,5 @@
-val dottyVersion = "3.1.1"
+val dottyVersion = "3.1.3-RC1-bin-SNAPSHOT"
+//val dottyVersion = "3.1.1"
 //val dottyVersion = "3.0.2-RC1-bin-SNAPSHOT"
 
 ThisBuild/version := "0.9.3-SNAPSHOT"
@@ -92,7 +93,7 @@ lazy val zio2  = crossProject(JSPlatform, JVMPlatform)
     )
   ).jvmSettings(
     scalacOptions ++= Seq( "-unchecked", "-Ydebug-trace", "-Ydebug-names", "-Xprint-types",
-                            "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" )
+                            "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms", "-explain" )
   )
 
 

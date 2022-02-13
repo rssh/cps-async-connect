@@ -9,16 +9,16 @@ import munit.*
 
 
   
-/*
+
 class TestAsyncZIO extends munit.FunSuite {
 
 
       test("simple test of asyncZIO-1") {
          import scala.concurrent.ExecutionContext.Implicits.global
-         val program = asyncZIO[TLogging with Clock , Throwable] {
+         val program = asyncZIO[TLogging.Service with Clock , Throwable] {
              val intRef = await(Ref.make(0))
              await(TLog.logOp("createRef"))
-             val date = await(currentDateTime)
+             val date = await(Clock.currentDateTime)
              await(TLog.logOp("getDate"))
              await(TLog.lastRecords(10))
          }
@@ -33,5 +33,5 @@ class TestAsyncZIO extends munit.FunSuite {
       }
 
 }
-*/
+
 

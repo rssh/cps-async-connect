@@ -19,22 +19,17 @@ import munit.CatsEffectSuite
 object TestFuns {
 
   def myFun(using RunContext): IO[Boolean] = async[IO] {
-
     val results1 = talkToServer("request1", None)
     IO.sleep(100.millis)
- 
     val results2 = talkToServer("request2", Some(results1.data)) 
-    if (results2.isOk) {
+    if results2.isOk then
        writeToFile(results2.data)
        IO.println("done")
        true
-    } else {
+    else
        IO.println("abort abort abort")
        false
-    }
- 
   }
- 
 
   case class Result(
     isOk: Boolean,

@@ -27,11 +27,12 @@ class BasicGeneratorSuite extends FunSuite {
        }
      }
 
-     val res = stream.fold(0)(_ + _)
+     val res = stream.runFold(0)(_ + _)
 
-     Runtime.default.unsafeRunToFuture(res).map(x =>
+
+     Unsafe.unsafe(Runtime.default.unsafe.runToFuture(res).map(x =>
        assert(x == (1 to N).sum)
-     )
+     ))
 
   }
 
@@ -44,9 +45,9 @@ class BasicGeneratorSuite extends FunSuite {
       }
     }
 
-    val res = stream.fold(0)(_ + _)
+    val res = stream.runFold(0)(_ + _)
       
-    Runtime.default.unsafeRunToFuture(res).failed.map(ex => assert(ex.getMessage()=="bye"))
+    Unsafe.unsafe(Runtime.default.unsafe.runToFuture(res).failed.map(ex => assert(ex.getMessage()=="bye")))
     
   }
 

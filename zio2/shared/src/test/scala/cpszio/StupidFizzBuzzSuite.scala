@@ -32,7 +32,7 @@ class StupidFizzBuzzSuite extends FunSuite {
   
     val logService: TLogging.Service = new TLoggingImpl.Service
     val r = program.provideLayer( ZLayer.succeed(logService) )
-    Runtime.default.unsafeRunToFuture(r).map{ logs =>
+    Unsafe.unsafe(Runtime.default.unsafe.runToFuture(r).map{ logs =>
             //println(s"logs=$logs")
             assert(logs(0)==TLogging.MsgRecord("0"))
             assert(logs(1)==TLogging.MsgRecord("fizz"))
@@ -43,6 +43,7 @@ class StupidFizzBuzzSuite extends FunSuite {
             assert(logs(6)==TLogging.MsgRecord("fizz"))
             assert(logs(7)==TLogging.MsgRecord("4"))
          }
+    )
   }
 
 
@@ -61,8 +62,7 @@ class StupidFizzBuzzSuite extends FunSuite {
       }
       val logService: TLogging.Service = new TLoggingImpl.Service
       val r = program.provideLayer( ZLayer.succeed(logService) )
-      Runtime.default.unsafeRunToFuture(r)
-   
+      Unsafe.unsafe(Runtime.default.unsafe.runToFuture(r)) 
    }
 
    
@@ -94,13 +94,13 @@ class StupidFizzBuzzSuite extends FunSuite {
 
       val logService: TLogging.Service = new TLoggingImpl.Service
       val r = program.provideLayer( ZLayer.succeed(logService) )
-      Runtime.default.unsafeRunToFuture(r).map{ logs =>
+      Unsafe.unsafe(Runtime.default.unsafe.runToFuture(r).map{ logs =>
          //println(s"logs=$logs")
          assert(logs(0)==TLogging.MsgRecord("0"))
          assert(logs(1)==TLogging.MsgRecord("fizz"))
          assert(logs(6)==TLogging.MsgRecord("fizz"))
          assert(logs(7)==TLogging.MsgRecord("4"))
-      }
+      })
 
    }
   

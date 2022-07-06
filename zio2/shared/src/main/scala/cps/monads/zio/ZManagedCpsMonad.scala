@@ -3,6 +3,7 @@ package cps.monads.zio
 import cps._
 import cps.macros._
 import zio._
+import zio.managed._
 import scala.util._
 import scala.concurrent._
 
@@ -33,10 +34,10 @@ class ZManagedCpsMonad[R, E] extends CpsTryMonadWithInstanceContext[[X]=>>ZManag
       fa.flatMap(f)
 
   def error[A](e: Throwable): F[A] = 
-      ZManaged.fromEffect(GenericThrowableAdapter.fromThrowable(e))
+      ZManaged.fromZIO(GenericThrowableAdapter.fromThrowable(e))
 
   def flatMapTry[A, B](fa: F[A])(f: util.Try[A] => F[B]): F[B] =
-      fa.foldM(
+      fa.foldManaged(
           e => f(Failure(GenericThrowableAdapter.toThrowable(e))),
           a => f(Success(a))
       )
@@ -63,7 +64,7 @@ given zioToZManaged[R1,R2<:R1,E1,E2>:E1]:
                                                              [T]=>> ZManaged[R2,E2,T]] with
 
     def apply[T](ft:ZIO[R1,E1,T]): ZManaged[R2,E2,T]=
-        ZManaged.fromEffect[R2,E2,T](ft)
+        ZManaged.fromZIO[R2,E2,T](ft)
 
                                 
 

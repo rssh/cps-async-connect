@@ -28,7 +28,7 @@ class ZIOCpsMonad[R, E] extends CpsConcurentEffectMonadWithInstanceContext[[X]=>
         case other => ZIO.fail(other.asInstanceOf[E])
 
   def flatMapTry[A, B](fa: F[A])(f: util.Try[A] => F[B]): F[B] =
-      fa.foldM(
+      fa.foldZIO(
           e => f(Failure(GenericThrowableAdapter.toThrowable(e))),
           a => f(Success(a))
       )
@@ -38,7 +38,7 @@ class ZIOCpsMonad[R, E] extends CpsConcurentEffectMonadWithInstanceContext[[X]=>
          case Failure(ex) => zioCallback(error(ex))
          case Success(a) => zioCallback(ZIO.succeed(a))
       }
-      ZIO.effectAsync[R,E,A] { cb =>
+      ZIO.async[R,E,A] { cb =>
          source(adoptZIOCallback(cb))      
       }    
 
@@ -80,7 +80,7 @@ given zioToZio[R1,R2<:R1,E1,E2>:E1]: CpsMonadConversion[[T] =>> ZIO[R1,E1,T], [T
 given zioToRio[R]: CpsMonadConversion[[T] =>> ZIO[Nothing,Any,T], [T]=>>RIO[R,T]] with
 
     def apply[T](ft:ZIO[Nothing,Any,T]): RIO[R,T] =
-        val r1 = ft.foldM(
+        val r1 = ft.foldZIO(
           e => {
               ZIO.fail[Throwable](GenericThrowableAdapter.toThrowable(e))
           },
@@ -91,15 +91,15 @@ given zioToRio[R]: CpsMonadConversion[[T] =>> ZIO[Nothing,Any,T], [T]=>>RIO[R,T]
 
                                 
 
-given futureZIOConversion[R,E](using zio.Runtime[R], ZTraceElement):
+given futureZIOConversion[R,E](using zio.Runtime[R]):
                                        CpsMonadConversion[[T]=>>ZIO[R,E,T],Future] with
 
    def apply[T](ft:ZIO[R,E,T]): Future[T]  =
-        summon[Runtime[R]].unsafeRunToFuture(ft.mapError(e => GenericThrowableAdapter.toThrowable(e)))
+        Unsafe.unsafe(summon[Runtime[R]].unsafe.runToFuture(ft.mapError(e => GenericThrowableAdapter.toThrowable(e))))
 
 
 
-given zioFutureConversion(using ZTraceElement): CpsMonadConversion[Future,[T]=>>ZIO[Any,Throwable,T]] with
+given zioFutureConversion: CpsMonadConversion[Future,[T]=>>ZIO[Any,Throwable,T]] with
 
    def apply[T](ft:Future[T]): ZIO[Any,Throwable,T] =
         ZIO.fromFuture( ec => ft )

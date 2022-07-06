@@ -46,7 +46,7 @@ object TLoggingImpl {
 
   import TLogging._
 
-  val layer: URLayer[Any,TLogging.Service] = (()=>Service()).toLayer
+  val layer: URLayer[Any,TLogging.Service] = ZLayer.fromFunction(()=>Service())
 
 
   class Service extends TLogging.Service {
@@ -55,26 +55,26 @@ object TLoggingImpl {
      var lastOpCache: Option[String] = None
      var log: IndexedSeq[LogRecord] = IndexedSeq()
 
-     def lastOp(): Task[Option[String]] = Task(lastOpCache)
+     def lastOp(): Task[Option[String]] = ZIO.attempt(lastOpCache)
 
      def logOp(op: String): UIO[Unit] =
-          UIO.apply{
+          ZIO.succeed{
              lastOpCache = Some(op)
              log = log :+ OpRecord(op)
           }
      
      def logMsg(msg: String): UIO[Unit] =
-          UIO.apply{
+          ZIO.succeed{
              log = log :+ MsgRecord(msg)
           }
 
      def logThrowable(ex: Throwable): Task[Unit] =
-          Task.effect{
+          ZIO.attempt{
              log = log :+ ExceptionRecord(ex)
           }
 
      def lastRecords(n: Int): Task[IndexedSeq[LogRecord]] =
-          Task{ log.takeRight(n)  }
+          ZIO.attempt{ log.takeRight(n)  }
 
   }
 

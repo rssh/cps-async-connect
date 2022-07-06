@@ -22,10 +22,10 @@ class ConcurrentSuite extends munit.FunSuite {
         val m = summon[CpsConcurrentEffectMonad[Task]]
         val x = new AtomicInteger(0)
         val fiber1 = await(m.spawnEffect{
-           Task.effect{ x.incrementAndGet() }
+          ZIO.attempt{ x.incrementAndGet() }
         })
         val fiber2 = await(m.spawnEffect{
-          Task.effect{ x.incrementAndGet() }
+          ZIO.attempt{ x.incrementAndGet() }
         })
         val y1 = await(m.join(fiber1))
         val y2 = await(m.join(fiber2))

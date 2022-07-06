@@ -8,6 +8,7 @@ import scala.collection.mutable.ArrayBuffer
 
 import cps.*
 import cps.monads.zio.{given,*}
+import zio.managed.*
 
 
 class WriterEmu {
@@ -35,7 +36,7 @@ class ResourceSuite extends FunSuite {
 
 
     def makeWriterEmu(): TaskManaged[WriterEmu] =
-        ZManaged.make(ZIO.effect(new WriterEmu()))(a => ZIO.effectTotal(a.close()))
+        ZManaged.acquireReleaseInterruptibleWith(ZIO.attempt(new WriterEmu()))(a => ZIO.succeed(a.close()))
 
     test("using ZManaged") {
         //implicit val printCode = cps.macros.flags.PrintCode
@@ -51,13 +52,13 @@ class ResourceSuite extends FunSuite {
                 (a, a.messages.toList, a.isClosed)
             }
         }
-        Runtime.default.unsafeRunToFuture(prg).map{ 
+        Unsafe.unsafe(Runtime.default.unsafe.runToFuture(prg).map{ 
             (a, messages, isClosedInside) =>
                 //println(s"a = $a")
                 //println(s"messages = $messages")
                 assert(a.isClosed)
                 assert(!isClosedInside)
-        }
+        })
 
     }
 

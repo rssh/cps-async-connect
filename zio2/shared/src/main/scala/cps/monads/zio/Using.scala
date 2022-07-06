@@ -2,6 +2,7 @@ package cps.monads.zio
 
 import cps.*
 import zio.*
+import zio.managed.*
 
 /**
  * pseudo-synchronious variant of `use` for using inside async block. 

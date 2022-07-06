@@ -18,5 +18,5 @@ given ZStreamEmitAbsorber[R,E,O](using ExecutionContext):  BaseUnfoldCpsAsyncEmi
         ZStream.unwrap(fs)
 
   def unfold[S](s0:S)(f:S => ZIO[R,E,Option[(O,S)]]): ZStream[R,E,O] =
-        ZStream.unfoldM[R,E,O,S](s0)(f)
+        ZStream.unfoldZIO[R,E,O,S](s0)(f)
 

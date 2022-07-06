@@ -6,7 +6,7 @@
 ## cats-effects:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.9.8"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % "0.9.9-1"  
 ```
 
 
@@ -66,7 +66,7 @@ instead
 # monix:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-monix" % "0.9.8"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-monix" % "0.9.9-1"  
 ```
 
 
@@ -103,7 +103,7 @@ def intStream() = asyncStream[Observable[Int]] { out =>
 ## scalaz IO:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-scalaz" % "0.9.8"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-scalaz" % "0.9.9-1"  
 ```
 
   * IO - cps.monads.scalaz.scalazIO  (implements CpsTryMonad)
@@ -114,13 +114,13 @@ def intStream() = asyncStream[Observable[Int]] { out =>
 for 1.x:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-zio" % "0.9.8"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-zio" % "0.9.9-1"  
 ```
 
 for 2.x:
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-zio2" % "0.9.8"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-zio2" % "0.9.9-1"  
 ```
 
 Usage:
@@ -179,7 +179,7 @@ val stream = asyncStream[Stream[Throwable,Int]] { out =>
 
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-akka-stream" % "0.9.8"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-akka-stream" % "0.9.9-1"  
 ```
 
 Generator syntax for akka source.
@@ -188,7 +188,7 @@ Generator syntax for akka source.
 ## fs2 streams
 
 ```
-  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-fs2 % "0.9.8"  
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-fs2 % "0.9.9-1"  
 ```
 
 Generator syntax for fs2

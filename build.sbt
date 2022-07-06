@@ -2,7 +2,7 @@
 val dottyVersion = "3.1.3"
 //val dottyVersion = "3.0.2-RC1-bin-SNAPSHOT"
 
-ThisBuild/version := "0.9.9"
+ThisBuild/version := "0.9.9-1"
 ThisBuild/organization := "com.github.rssh"
 
 Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)

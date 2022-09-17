@@ -1,15 +1,15 @@
 //val dottyVersion = "3.1.3-RC1-bin-SNAPSHOT"
-val dottyVersion = "3.1.3"
+val dottyVersion = "3.2.0"
 //val dottyVersion = "3.0.2-RC1-bin-SNAPSHOT"
 
-ThisBuild/version := "0.9.10"
+ThisBuild/version := "0.9.11-SNAPSHOT"
 ThisBuild/organization := "com.github.rssh"
 
 Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.10",
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.11-SNAPSHOT",
    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.29" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )

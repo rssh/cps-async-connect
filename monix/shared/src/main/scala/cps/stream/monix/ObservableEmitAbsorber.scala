@@ -10,7 +10,7 @@ import cps.*
 import cps.stream.*
 import scala.concurrent.*
 
-given ObservableEmitAbsorber[T](using ec: ExecutionContext):  BaseUnfoldCpsAsyncEmitAbsorber[Observable[T],Task, CpsMonadInstanceContextBody[Task], T] with 
+given ObservableEmitAbsorber[T](using ExecutionContext):  BaseUnfoldCpsAsyncEmitAbsorber[Observable[T],Task, CpsMonadInstanceContextBody[Task], T] with 
 
   override type Element = T
 

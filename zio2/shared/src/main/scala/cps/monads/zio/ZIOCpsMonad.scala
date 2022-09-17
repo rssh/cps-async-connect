@@ -95,7 +95,8 @@ given futureZIOConversion[R,E](using zio.Runtime[R]):
                                        CpsMonadConversion[[T]=>>ZIO[R,E,T],Future] with
 
    def apply[T](ft:ZIO[R,E,T]): Future[T]  =
-        Unsafe.unsafe(summon[Runtime[R]].unsafe.runToFuture(ft.mapError(e => GenericThrowableAdapter.toThrowable(e))))
+     Unsafe.unsafe( implicit unsafe =>
+          summon[Runtime[R]].unsafe.runToFuture(ft.mapError(e => GenericThrowableAdapter.toThrowable(e))))
 
 
 

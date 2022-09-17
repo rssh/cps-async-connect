@@ -52,7 +52,7 @@ class ResourceSuite extends FunSuite {
                 (a, a.messages.toList, a.isClosed)
             }
         }
-        Unsafe.unsafe(Runtime.default.unsafe.runToFuture(prg).map{ 
+        Unsafe.unsafe(implicit unsafe => Runtime.default.unsafe.runToFuture(prg).map{ 
             (a, messages, isClosedInside) =>
                 //println(s"a = $a")
                 //println(s"messages = $messages")

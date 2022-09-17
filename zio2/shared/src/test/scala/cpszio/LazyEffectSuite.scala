@@ -21,7 +21,7 @@ class LazyEffectSuite extends FunSuite {
        x = 1
      }
      assert(x == 0)
-     Unsafe.unsafe(Runtime.default.unsafe.runToFuture(c).map{ r =>
+     Unsafe.unsafe(implicit unsafe => Runtime.default.unsafe.runToFuture(c).map{ r =>
        assert(x == 1 )
      })
 
@@ -46,7 +46,7 @@ class LazyEffectSuite extends FunSuite {
        assert(x == 0)
        assert(y == 2)
      }
-     Unsafe.unsafe(Runtime.default.unsafe.runToFuture(c2))
+     Unsafe.unsafe(implicit unsafe => Runtime.default.unsafe.runToFuture(c2))
   }
 
 }

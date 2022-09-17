@@ -24,7 +24,7 @@ class TestAsyncZIO extends munit.FunSuite {
          }
          val logService: TLogging.Service = new TLoggingImpl.Service
          val r = program.provideLayer(ZLayer.succeed(logService))
-         Unsafe.unsafe(Runtime.default.unsafe.runToFuture(r)
+         Unsafe.unsafe(implicit unsafe => Runtime.default.unsafe.runToFuture(r)
           .map{ logs =>
             //println(s"logs=$logs") 
             assert(logs(0)==TLogging.OpRecord("createRef"))

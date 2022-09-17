@@ -37,7 +37,7 @@ class FutureInteropSuite extends munit.FunSuite {
        val y = await(zioApi.getY)
        assert(x + y == 5)
      }
-     Unsafe.unsafe(Runtime.default.unsafe.runToFuture(run))
+     Unsafe.unsafe(implicit unsafe => Runtime.default.unsafe.runToFuture(run))
   }
 
   test("make sure that ZIO async can adopt Future in RIO") {
@@ -53,7 +53,7 @@ class FutureInteropSuite extends munit.FunSuite {
        assert(x + y == 5)
      }
      val runtime = Runtime.default.mapEnvironment(_ => ZEnvironment[Apis](new Apis))
-     Unsafe.unsafe(runtime.unsafe.runToFuture(program))
+     Unsafe.unsafe(implicit unsafe => runtime.unsafe.runToFuture(program))
   }
 
   test("make sure that Future async can adopt ZIO with given Runtime") {

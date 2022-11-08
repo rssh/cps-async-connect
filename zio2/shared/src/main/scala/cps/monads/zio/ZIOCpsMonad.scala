@@ -89,8 +89,8 @@ given zioToRio[R]: CpsMonadConversion[[T] =>> ZIO[Nothing,Any,T], [T]=>>RIO[R,T]
         val r2: RIO[R,T] = r1.asInstanceOf[ZIO[R,Throwable,T]]
         r2
 
+    
                                 
-
 given futureZIOConversion[R,E](using zio.Runtime[R]):
                                        CpsMonadConversion[[T]=>>ZIO[R,E,T],Future] with
 

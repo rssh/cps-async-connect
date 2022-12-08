@@ -1,15 +1,15 @@
 //val dottyVersion = "3.1.3-RC1-bin-SNAPSHOT"
-val dottyVersion = "3.2.0"
+val dottyVersion = "3.2.1"
 //val dottyVersion = "3.0.2-RC1-bin-SNAPSHOT"
 
-ThisBuild/version := "0.9.11"
+ThisBuild/version := "0.9.12"
 ThisBuild/organization := "com.github.rssh"
 
 Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.11",
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.12",
    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.29" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )
@@ -33,7 +33,7 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     name := "cps-async-connect-cats-effect",
-    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.3.14",
+    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.4.2",
     libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % "1.0.7" % Test
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },

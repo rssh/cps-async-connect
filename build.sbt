@@ -61,8 +61,8 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
     commonSettings,
     name := "cps-async-connect-zio",
     libraryDependencies ++= Seq(
-      "dev.zio" %%% "zio" % "1.0.16",
-      "dev.zio" %%% "zio-streams" % "1.0.16",
+      "dev.zio" %%% "zio" % "1.0.17",
+      "dev.zio" %%% "zio-streams" % "1.0.17",
     )
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
@@ -76,15 +76,15 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
                             "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" )
   )
 
-lazy val zio2  = crossProject(JSPlatform, JVMPlatform)   
+lazy val zio2  = crossProject(JSPlatform,JVMPlatform)  //TODO: submit bug to zio (linked error with scalajs-1.12.0)
   .in(file("zio2"))
   .settings(
     commonSettings,
     name := "cps-async-connect-zio2",
     libraryDependencies ++= Seq(
-      "dev.zio" %%% "zio" % "2.0.2",
-      "dev.zio" %%% "zio-managed" % "2.0.2",
-      "dev.zio" %%% "zio-streams" % "2.0.2",
+      "dev.zio" %%% "zio" % "2.0.4",
+      "dev.zio" %%% "zio-managed" % "2.0.4",
+      "dev.zio" %%% "zio-streams" % "2.0.4",
     )
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
@@ -127,7 +127,7 @@ lazy val root = (project in file("."))
                            monix.jvm, monix.js,
                            scalaz.jvm, scalaz.js , 
                            zio.jvm,  zio.js,
-                           zio2.jvm,  zio2.js,
+                           zio2.jvm,  /* zio2.js, */
                            streamFs2.jvm, streamFs2.js,
                            streamAkka
                 )

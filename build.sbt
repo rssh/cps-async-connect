@@ -2,14 +2,14 @@
 val dottyVersion = "3.2.1"
 //val dottyVersion = "3.0.2-RC1-bin-SNAPSHOT"
 
-ThisBuild/version := "0.9.14-SNAPSHOT"
+ThisBuild/version := "0.9.14"
 ThisBuild/organization := "com.github.rssh"
 
 Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.14-SNAPSHOT",
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.14",
    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.29" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )
@@ -126,7 +126,7 @@ lazy val probabilityMonad = (project in file("probability-monad")).
                                commonSettings,
                                name := "cps-async-connect-probabiliy-monad",
                                libraryDependencies ++= Seq(
-                                  ("org.jliszka" %% "probability-monad" % "1.0.4").cross(CrossVersion.for3Use2_13)
+                                  ("org.jliszka" %%% "probability-monad" % "1.0.4").cross(CrossVersion.for3Use2_13)
                                )
                              )
 
@@ -138,7 +138,8 @@ lazy val root = (project in file("."))
                            zio.jvm,  zio.js,
                            zio2.jvm,  /* zio2.js, */
                            streamFs2.jvm, streamFs2.js,
-                           streamAkka
+                           streamAkka,
+                           probabilityMonad
                 )
                 .settings(
                    publish := {},

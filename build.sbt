@@ -9,7 +9,7 @@ Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.12",
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.14-SNAPSHOT",
    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.29" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )

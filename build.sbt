@@ -121,6 +121,15 @@ lazy val streamAkka = (project in file("stream-akka")).
                          )
                       )
 
+lazy val probabilityMonad = (project in file("probability-monad")).
+                             settings(
+                               commonSettings,
+                               name := "cps-async-connect-probabiliy-monad",
+                               libraryDependencies ++= Seq(
+                                  ("org.jliszka" %% "probability-monad" % "1.0.4").cross(CrossVersion.for3Use2_13)
+                               )
+                             )
+
 
 lazy val root = (project in file("."))
                 .aggregate(catsEffect.jvm, catsEffect.js,

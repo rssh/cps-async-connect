@@ -1,8 +1,9 @@
 package cpszio
 
 import scala.concurrent.*
+import scala.concurrent.duration.*
 
-import zio.*
+import zio.{Duration=>_,*}
 import zio.stream.*
 import cps.{async, asyncStream, await}
 import cps.stream.AsyncList
@@ -16,39 +17,39 @@ import munit.*
 
 class DCAIssue65Suite extends FunSuite {
 
-  val N = 10000
+  val N = 100_000
 
   type ZF[X] = ZIO[Any, Throwable, X]
 
+  override val munitTimeout = Duration(300, "s")
+
+  given cps.macros.flags.PrintCode.type = cps.macros.flags.PrintCode
+
   def readingByIterator(ec: ExecutionContext)(implicit loc: munit.Location):Future[Long] = {
-    given ExecutionContext = ExecutionContext.global
-    println("start")
+    given ExecutionContext = ec
     val stream: AsyncList[ZF, Int] = asyncStream[AsyncList[ZF, Int]] { out =>
-      println("begin generator")
       out.emit(0)
-      println("plop")
-      for i <- 1 to 10_000_000 do out.emit(i)
+      for i <- 1 to N do out.emit(i)
     }
-    println("before for loop")
     val ite = stream.iterator
     val compute: ZF[Long] = async[ZF] {
-      println("begin sink")
       var n = await(ite.next)
       var res: Long = 0
-      println("before while")
       while (n.nonEmpty) {
         res += n.get
         n = await(ite.next)
       }
       res
     }
-    println("before unsafe")
-    //Unsafe.unsafe { implicit unsafe => zio.Runtime.default.unsafe.run(compute).getOrThrowFiberFailure() }
     Unsafe.unsafe { implicit unsafe => zio.Runtime.default.unsafe.runToFuture(compute) }
   }
   
-  test("reading by iterator with global execution context") {
+  test("dotty-cps-async:65:global:reading by iterator with global execution context") {
     readingByIterator(ExecutionContext.global)
+  }
+
+  test("dotty-cps-async:65:global:reading by iterator with parasitic execution context") {
+    readingByIterator(ExecutionContext.parasitic)
   }
 
 

@@ -194,7 +194,7 @@ Generator syntax for akka source.
 Generator syntax for fs2
 
 
-## probability monads
+## probability monad
 
 ```
   libraryDependencies += "com.github.rssh" %%% "cps-async-connect-probability-monad" % version

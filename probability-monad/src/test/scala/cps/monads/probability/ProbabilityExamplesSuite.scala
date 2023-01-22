@@ -11,10 +11,10 @@ class ProbabilityExamplesSuite extends FunSuite {
 
   case class Trial(haveFairCoin: Boolean, flips: List[Coin])
 
-  def bayesianCoin(nFlips: Int): Distribution[Trial] = async[Distribution] {
-       val haveFairCoin = await(tf())
+  def bayesianCoin(nFlips: Int): Distribution[Trial] = reify[Distribution] {
+       val haveFairCoin = reflect(tf())
        val myCoin = if (haveFairCoin) coin else biasedCoin(0.9)
-       val flips = await(myCoin.repeat(nFlips))
+       val flips = reflect(myCoin.repeat(nFlips))
        Trial(haveFairCoin, flips)
   }
 

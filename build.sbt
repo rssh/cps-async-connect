@@ -1,15 +1,16 @@
 //val dottyVersion = "3.1.3-RC1-bin-SNAPSHOT"
-val dottyVersion = "3.2.1"
+val dottyVersion = "3.2.2"
 //val dottyVersion = "3.0.2-RC1-bin-SNAPSHOT"
 
-ThisBuild/version := "0.9.14"
+ThisBuild/version := "0.9.15"
 ThisBuild/organization := "com.github.rssh"
+ThisBuild/resolvers += Resolver.mavenLocal
 
 Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.14",
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.15",
    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.29" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )
@@ -82,9 +83,9 @@ lazy val zio2  = crossProject(JSPlatform,JVMPlatform)  //TODO: submit bug to zio
     commonSettings,
     name := "cps-async-connect-zio2",
     libraryDependencies ++= Seq(
-      "dev.zio" %%% "zio" % "2.0.4",
-      "dev.zio" %%% "zio-managed" % "2.0.4",
-      "dev.zio" %%% "zio-streams" % "2.0.4",
+      "dev.zio" %%% "zio" % "2.0.5",
+      "dev.zio" %%% "zio-managed" % "2.0.5",
+      "dev.zio" %%% "zio-streams" % "2.0.5",
     )
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
@@ -136,7 +137,7 @@ lazy val root = (project in file("."))
                            monix.jvm, monix.js,
                            scalaz.jvm, scalaz.js , 
                            zio.jvm,  zio.js,
-                           zio2.jvm,  /* zio2.js, */
+                           zio2.jvm,  zio2.js, 
                            streamFs2.jvm, streamFs2.js,
                            streamAkka,
                            probabilityMonad

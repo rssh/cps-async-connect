@@ -2,7 +2,7 @@
 val dottyVersion = "3.2.2"
 //val dottyVersion = "3.0.2-RC1-bin-SNAPSHOT"
 
-ThisBuild/version := "0.9.16-SNAPSHOT"
+ThisBuild/version := "0.9.16"
 ThisBuild/organization := "com.github.rssh"
 ThisBuild/resolvers += Resolver.mavenLocal
 

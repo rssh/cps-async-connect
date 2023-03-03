@@ -14,7 +14,7 @@ Usage:
 
 ```scala
 import cps._
-import cps.monads.cats.given
+import cps.monads.catsEffect.given
 
 ...
 def doSomething(): IO[T] = async[IO] {

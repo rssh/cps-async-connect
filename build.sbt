@@ -11,7 +11,7 @@ Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
    libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.16",
-   libraryDependencies += "org.scalameta" %%% "munit" % "0.7.29" % Test,
+   libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M6" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )
 
@@ -29,13 +29,13 @@ lazy val scalaz  = crossProject(JSPlatform, JVMPlatform)
   )
 
 
-lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
+lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("cats-effect"))
   .settings(
     commonSettings,
     name := "cps-async-connect-cats-effect",
-    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.4.7",
-    libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % "1.0.7" % Test
+    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.5.0",
+    libraryDependencies += "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     scalaJSUseMainModuleInitializer := true,
@@ -77,7 +77,7 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
                             "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" )
   )
 
-lazy val zio2  = crossProject(JSPlatform,JVMPlatform)  //TODO: submit bug to zio (linked error with scalajs-1.12.0)
+lazy val zio2  = crossProject(JSPlatform, JVMPlatform)  //TODO: submit bug to zio (linked error with scalajs-1.12.0)
   .in(file("zio2"))
   .settings(
     commonSettings,
@@ -133,7 +133,7 @@ lazy val probabilityMonad = (project in file("probability-monad")).
 
 
 lazy val root = (project in file("."))
-                .aggregate(catsEffect.jvm, catsEffect.js,
+                .aggregate(catsEffect.jvm, catsEffect.js, catsEffect.native,
                            monix.jvm, monix.js,
                            scalaz.jvm, scalaz.js , 
                            zio.jvm,  zio.js,

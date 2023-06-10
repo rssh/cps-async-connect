@@ -9,12 +9,15 @@ import scala.concurrent._
 import scala.concurrent.duration._
 
 import cps._
-import cps.monads.given
+import cps.monads.{*,given}
 import cps.monads.catsEffect.given
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class FutureInteropSuite extends CatsEffectSuite {
+
+  // use FutureAsyncAPI monad 
+  import cps.monads.{*,given}
 
   class FutureBasedAPI {
 

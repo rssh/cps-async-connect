@@ -8,7 +8,7 @@ import scala.util._
 import scala.util.control.NonFatal
 import scala.concurrent._
 
-class CatsMonad[F[_]](using mf: Monad[F]) extends CpsMonad[F] with CpsMonadInstanceContext[F]:
+trait CatsMonad[F[_]](using mf: Monad[F]) extends CpsMonad[F]:
 
   def pure[A](a:A): F[A] =
     mf.pure(a)
@@ -20,7 +20,10 @@ class CatsMonad[F[_]](using mf: Monad[F]) extends CpsMonad[F] with CpsMonadInsta
     mf.flatMap(fa)(f)
 
 
-class CatsMonadThrow[F[_]](using MonadThrow[F]) extends CatsMonad[F] with CpsTryMonad[F]:
+class CatsMonadPure[F[_]](using mf: Monad[F]) extends CatsMonad[F](using mf) with CpsPureMonadInstanceContext[F]
+
+
+class CatsMonadThrow[F[_]](using MonadThrow[F]) extends CatsMonad[F] with CpsTryMonadInstanceContext[F]:
 
   def error[A](e: Throwable): F[A] =
     summon[MonadThrow[F]].raiseError(e)
@@ -32,7 +35,7 @@ class CatsMonadThrow[F[_]](using MonadThrow[F]) extends CatsMonad[F] with CpsTry
     summon[MonadThrow[F]].redeemWith(fa)( ex => f(Failure(ex)), a => f(Success(a)) )
 
 
-class CatsAsync[F[_]](using Async[F]) extends CatsMonadThrow[F] with CpsAsyncEffectMonad[F]:
+class CatsAsync[F[_]](using Async[F]) extends CatsMonadThrow[F] with CpsAsyncEffectMonadInstanceContext[F]:
 
   def adoptCallbackStyle[A](source: (Try[A]=>Unit) => Unit): F[A] =
     def adoptIOCallback(ioCallback: Either[Throwable, A]=>Unit): Try[A]=>Unit = {
@@ -44,7 +47,8 @@ class CatsAsync[F[_]](using Async[F]) extends CatsMonadThrow[F] with CpsAsyncEff
     }
 
 
-class CatsConcurrent[F[_]](using Concurrent[F], Async[F]) extends CatsAsync[F] with CpsConcurrentEffectMonad[F]:
+class CatsConcurrent[F[_]](using Concurrent[F], Async[F]) extends CatsAsync[F] 
+                                                                   with CpsConcurrentEffectMonadInstanceContext[F]:
 
   type Spawned[A] = Fiber[F,Throwable,A]
 
@@ -71,13 +75,13 @@ class CatsConcurrent[F[_]](using Concurrent[F], Async[F]) extends CatsAsync[F] w
 
 
 
-given catsMonad[F[_]](using Monad[F]): CpsMonad[F] = CatsMonad[F]()
+given catsMonadPure[F[_]](using Monad[F], NotGiven[MonadThrow[F]]): CpsPureMonadInstanceContext[F] = CatsMonadPure[F]()
 
-given catsMonadThrow[F[_]](using MonadThrow[F]): CpsTryMonad[F] = CatsMonadThrow[F]()
+given catsMonadThrow[F[_]](using MonadThrow[F], NotGiven[Async[F]]): CpsTryMonadInstanceContext[F] = CatsMonadThrow[F]()
 
-given catsAsync[F[_]](using Async[F], NotGiven[Concurrent[F]]): CpsAsyncEffectMonad[F] = CatsAsync[F]()
+given catsAsync[F[_]](using Async[F], NotGiven[Concurrent[F]]): CpsAsyncMonadInstanceContext[F] = CatsAsync[F]()
 
-given catsConcurrent[F[_]](using Concurrent[F], Async[F]): CpsConcurrentEffectMonad[F] = CatsConcurrent[F]()
+given catsConcurrent[F[_]](using Concurrent[F], Async[F]): CpsConcurrentEffectMonadInstanceContext[F] = CatsConcurrent[F]()
 
 given catsMemoization[F[_]](using Concurrent[F]) :CpsMonadMemoization.Pure[F] with
     

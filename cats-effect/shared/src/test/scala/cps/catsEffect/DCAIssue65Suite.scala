@@ -22,7 +22,7 @@ class DCAIssue65Suite extends FunSuite {
 
   override val munitTimeout = Duration(300, "s")
 
-  given cps.macros.flags.PrintCode.type = cps.macros.flags.PrintCode
+  //given cps.macros.flags.PrintCode.type = cps.macros.flags.PrintCode
 
   def readingByIterator(ec: ExecutionContext)(implicit loc: munit.Location):Future[Long] = {
     given ExecutionContext = ec

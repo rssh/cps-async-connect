@@ -1,7 +1,8 @@
 //val dottyVersion = "3.3.2-RC1-bin-SNAPSHOT"
 val dottyVersion = "3.3.0"
 
-ThisBuild/version := "0.9.17-SNAPSHOT"
+ThisBuild/version := "0.9.18-SNAPSHOT"
+ThisBuild/versionScheme := Some("semver-spec")
 ThisBuild/organization := "com.github.rssh"
 ThisBuild/resolvers += Resolver.mavenLocal
 
@@ -106,8 +107,8 @@ lazy val streamFs2 = crossProject(JSPlatform, JVMPlatform)
                          commonSettings,
                          name := "cps-async-connect-fs2",
                          libraryDependencies ++= Seq(
-                             "co.fs2" %%% "fs2-core" % "3.6.1",
-                             "org.typelevel" %%% "munit-cats-effect-3" % "1.0.7" % Test
+                             "co.fs2" %%% "fs2-core" % "3.7.0",
+                             "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test
                          )
                       )
 

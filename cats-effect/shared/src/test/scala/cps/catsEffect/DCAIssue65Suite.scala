@@ -22,13 +22,13 @@ class DCAIssue65Suite extends FunSuite {
 
   override val munitTimeout = Duration(300, "s")
 
-  given cps.macros.flags.PrintCode.type = cps.macros.flags.PrintCode
+  //given cps.macros.flags.PrintCode.type = cps.macros.flags.PrintCode
 
-  def readingByIterator(ec: ExecutionContext)(implicit loc: munit.Location):Future[Long] = {
+  def readingByIterator(ec: ExecutionContext, nIterations: Int)(implicit loc: munit.Location):Future[Long] = {
     given ExecutionContext = ec
     val stream: AsyncList[IO, Int] = asyncStream[AsyncList[IO, Int]] { out =>
       out.emit(0)
-      for i <- 1 to N do out.emit(i)
+      for i <- 1 to nIterations do out.emit(i)
     }
     val ite = stream.iterator
     val compute: IO[Long] = async[IO] {
@@ -42,14 +42,16 @@ class DCAIssue65Suite extends FunSuite {
     }
     compute.unsafeToFuture()
   }
-
-// not sure why it is not working
-//  test("dotty-cps-async:65:global:reading by iterator with global execution context") {
-//    readingByIterator(ExecutionContext.global)
-//  }
+  
+  test("dotty-cps-async:65:global:reading by iterator with global execution context") {
+    val nInteractions = System.getProperty("java.vm.name") match
+      case "Scala Native" =>  1000
+      case _ => N
+    readingByIterator(ExecutionContext.global, nInteractions)
+  }
 
   test("dotty-cps-async:65:global:reading by iterator with parasitic execution context") {
-    readingByIterator(ExecutionContext.parasitic)
+    readingByIterator(ExecutionContext.parasitic, N)
   }
 
 

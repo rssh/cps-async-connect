@@ -1,7 +1,7 @@
 package cps.monads.catsEffect
 /*
  * (C) Ruslan Shevchenko <ruslan@shevchenko.kiev.ua>
- * 2021
+ * 2021 - 2023
  */
 
 import scala.util.{Try,Success,Failure}
@@ -11,6 +11,8 @@ import cats.effect.*
 import cats.effect.kernel.*
 
 import cps.*
+
+
 
 /**
  * into F[T] to [A] =>> Resource[F,A] for using inside asyncScope
@@ -27,7 +29,7 @@ given resourceConversion[F[_]]: CpsMonadConversion[F, [A] =>> Resource[F,A]] =
 class AsyncScopeInferArg[F[_],C <: CpsMonadContext[[A]=>>Resource[F,A]]](using am: CpsTryMonad.Aux[[A]=>>Resource[F,A],C], mc: MonadCancel[F,Throwable]) {
 
     transparent inline def apply[T](inline body: C ?=> T):F[T] =
-            async[[X]=>>Resource[F,X]].apply(body).use(t=>summon[MonadCancel[F,Throwable]].pure(t))
+      am.apply(cps.macros.Async.transformContextLambda(body)).use(t=>summon[MonadCancel[F,Throwable]].pure(t))
 
 }
 

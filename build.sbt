@@ -1,8 +1,7 @@
-//val dottyVersion = "3.1.3-RC1-bin-SNAPSHOT"
-val dottyVersion = "3.2.2"
-//val dottyVersion = "3.0.2-RC1-bin-SNAPSHOT"
+//val dottyVersion = "3.3.2-RC1-bin-SNAPSHOT"
+val dottyVersion = "3.3.0"
 
-ThisBuild/version := "0.9.16"
+ThisBuild/version := "0.9.17-SNAPSHOT"
 ThisBuild/organization := "com.github.rssh"
 ThisBuild/resolvers += Resolver.mavenLocal
 
@@ -10,8 +9,8 @@ Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.16",
-   libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M6" % Test,
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.17",
+   libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M8" % Test,
    testFrameworks += new TestFramework("munit.Framework")
 )
 
@@ -83,9 +82,9 @@ lazy val zio2  = crossProject(JSPlatform, JVMPlatform)  //TODO: submit bug to zi
     commonSettings,
     name := "cps-async-connect-zio2",
     libraryDependencies ++= Seq(
-      "dev.zio" %%% "zio" % "2.0.9",
-      "dev.zio" %%% "zio-managed" % "2.0.9",
-      "dev.zio" %%% "zio-streams" % "2.0.9",
+      "dev.zio" %%% "zio" % "2.0.15",
+      "dev.zio" %%% "zio-managed" % "2.0.15",
+      "dev.zio" %%% "zio-streams" % "2.0.15",
     )
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
@@ -96,7 +95,7 @@ lazy val zio2  = crossProject(JSPlatform, JVMPlatform)  //TODO: submit bug to zi
     ),
   ).jvmSettings(
     scalacOptions ++= Seq( "-unchecked", "-Ydebug-trace", "-Ydebug-names", "-Xprint-types",
-                            "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms", "-explain" )
+                            "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" )
   )
 
 

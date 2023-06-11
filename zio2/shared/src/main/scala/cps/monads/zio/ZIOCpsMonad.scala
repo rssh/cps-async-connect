@@ -77,17 +77,18 @@ given zioToZio[R1,R2<:R1,E1,E2>:E1]: CpsMonadConversion[[T] =>> ZIO[R1,E1,T], [T
     def apply[T](ft:ZIO[R1,E1,T]): ZIO[R2,E2,T]= ft
 
 
-given zioToRio[R]: CpsMonadConversion[[T] =>> ZIO[Nothing,Any,T], [T]=>>RIO[R,T]] with
 
-    def apply[T](ft:ZIO[Nothing,Any,T]): RIO[R,T] =
-        val r1 = ft.foldZIO(
-          e => {
-              ZIO.fail[Throwable](GenericThrowableAdapter.toThrowable(e))
-          },
-          v => ZIO.succeed(v)
-        )
-        val r2: RIO[R,T] = r1.asInstanceOf[ZIO[R,Throwable,T]]
-        r2
+//given zioToRio[R]: CpsMonadConversion[[T] =>> ZIO[Nothing,Any,T], [T]=>>RIO[R,T]] with
+//
+//    def apply[T](ft:ZIO[Nothing,Any,T]): RIO[R,T] =
+//        val r1 = ft.foldZIO(
+//          e => {
+//              ZIO.fail[Throwable](GenericThrowableAdapter.toThrowable(e))
+//          },
+//          v => ZIO.succeed(v)
+//        )
+//        val r2: RIO[R,T] = r1.asInstanceOf[ZIO[R,Throwable,T]]
+//        r2
 
     
                                 

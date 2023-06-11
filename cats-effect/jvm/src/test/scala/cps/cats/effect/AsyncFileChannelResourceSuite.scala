@@ -27,7 +27,6 @@ import scala.language.implicitConversions
 
 
 
-
 def openAsyncFileChannel(name: Path, options: OpenOption*): Resource[IO, AsynchronousFileChannel] =
   Resource.make(acquire = IO.delay(AsynchronousFileChannel.open(name,options:_*)))(release = f=>IO(f.close()))
 
@@ -64,10 +63,10 @@ class AsyncFileChannelResourceSuite extends CatsEffectSuite {
     test("use cats resource with AsynchronousFileChannel") {
         import StandardOpenOption.*
         //implicit val printCode = cps.macros.flags.PrintCode
-        //implicit val debugLavel = cps.macros.flags.DebugLevel(20) 
+        //implicit val debugLavel = cps.macros.flags.DebugLevel(1) 
         val prg = asyncScope[IO] {
             val input = openAsyncFileChannel(Paths.get("cats-effect/jvm/src/test/resources/input"),READ)
-             val outputName = Files.createTempFile("output-async",null)
+            val outputName = Files.createTempFile("output-async",null)
             val output = openAsyncFileChannel(outputName,WRITE, CREATE, TRUNCATE_EXISTING)
             val buffer = ByteBuffer.allocate(BUF_SIZE)
             var nBytes = 0

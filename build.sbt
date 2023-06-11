@@ -34,7 +34,7 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
     commonSettings,
     name := "cps-async-connect-cats-effect",
     libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.5.0",
-    libraryDependencies += "org.typelevel" %%% "munit-cats-effect-3" % "1.0.7" % Test
+    libraryDependencies += "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     scalaJSUseMainModuleInitializer := true,
@@ -107,7 +107,7 @@ lazy val streamFs2 = crossProject(JSPlatform, JVMPlatform)
                          name := "cps-async-connect-fs2",
                          libraryDependencies ++= Seq(
                              "co.fs2" %%% "fs2-core" % "3.6.1",
-                             "org.typelevel" %%% "munit-cats-effect-3" % "1.0.7" % Test
+                             "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test
                          )
                       )
 

@@ -87,7 +87,7 @@ class ApiExampleDJSSuite extends CatsEffectSuite {
       "talk-request2-Some(answer1)" -> Success(Result(false,"answer2")),
       "writeToFile-answer2" -> Success(Result(true,"ok"))
     )) 
-    TestFuns.myFun.assertEquals(false)
+    assertIO(TestFuns.myFun, false)
 
   }
   

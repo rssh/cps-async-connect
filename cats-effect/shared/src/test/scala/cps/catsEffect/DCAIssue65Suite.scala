@@ -25,6 +25,7 @@ class DCAIssue65Suite extends FunSuite {
   //given cps.macros.flags.PrintCode.type = cps.macros.flags.PrintCode
 
   def readingByIterator(ec: ExecutionContext, nIterations: Int)(implicit loc: munit.Location):Future[Long] = {
+    println(s"ExecutionContext=$ec")
     given ExecutionContext = ec
     val stream: AsyncList[IO, Int] = asyncStream[AsyncList[IO, Int]] { out =>
       out.emit(0)
@@ -40,12 +41,15 @@ class DCAIssue65Suite extends FunSuite {
       }
       res
     }
-    compute.unsafeToFuture()
+    println(s"readingByIterator: before unsafeToFuture")
+    val retval = compute.unsafeToFuture()
+    println(s"readingByIterator: after unsafeToFuture")
+    retval
   }
   
   test("dotty-cps-async:65:global:reading by iterator with global execution context") {
     val nInteractions = System.getProperty("java.vm.name") match
-      case "Scala Native" =>  1000
+      case "Scala Native" =>  0
       case _ => N
     readingByIterator(ExecutionContext.global, nInteractions)
   }

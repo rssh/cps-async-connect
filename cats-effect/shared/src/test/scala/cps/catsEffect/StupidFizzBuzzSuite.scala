@@ -1,17 +1,19 @@
 package cps.catsEffect
 
 import scala.language.implicitConversions
-
-
 import cats.effect.{IO, SyncIO}
 import munit.CatsEffectSuite
-import concurrent.duration._
 
-import cps._
+import concurrent.duration.*
+import cps.*
 import cps.monads.catsEffect.given
 
+import scala.annotation.experimental
 
+@experimental
 class StupidFizzBuzzSuite extends CatsEffectSuite {
+  import cps.catsEffect.directRefs.{*, given}
+
 
   test("make sure that FizBuzz run N times") {
     val run = 
@@ -91,6 +93,30 @@ class StupidFizzBuzzSuite extends CatsEffectSuite {
       assert(logs(0)=="0")
       assert(logs(6)=="fizz")
       //IO.println(logs)
+      IO.unit
+    }
+  }
+
+  test("make sure that FizBuzz run N times with direct context") {
+    val run = async {
+      val logger = DToyLogger.make()
+      val ctr = IO.directRefOf(0)
+      while {
+         //await(IO.sleep(100.millisecond))
+         val v = ctr.get
+         logger.log(v.toString)
+         if v % 3 == 0 then
+            logger.log("fizz")
+         if v % 5 == 0 then
+            logger.log("buzz")
+         ctr.update(_ + 1)
+         v < 10
+      } do ()
+      logger.all()
+    }
+    run.flatMap{ logs =>
+      assert(logs(0)=="0")
+      assert(logs(6)=="fizz")
       IO.unit
     }
   }

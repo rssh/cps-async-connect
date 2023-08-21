@@ -127,6 +127,17 @@ lazy val streamAkka = (project in file("stream-akka")).
                          )
                       )
 
+lazy val streamPekko = (project in file("stream-pekko")).
+  settings(
+    commonSettings,
+    name := "cps-async-connect-pekko-stream",
+    scalacOptions += "-explain",
+    libraryDependencies ++= Seq(
+      ("org.apache.pekko" %% "pekko-stream" % "1.0.1")
+    )
+  )
+
+
 lazy val probabilityMonad = (project in file("probability-monad")).
                              settings(
                                commonSettings,

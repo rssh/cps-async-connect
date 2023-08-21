@@ -193,6 +193,14 @@ Generator syntax for akka source.
 
 Generator syntax for fs2
 
+## pekko-streams
+
+```
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-pekko-stream" % version  
+```
+
+Generator syntax for pekko source.
+
 
 ## probability monad
 

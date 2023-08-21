@@ -13,11 +13,11 @@ Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)
 
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
-   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.18-SNAPSHOT",
+   libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.18",
    libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M8" % Test,
    testFrameworks += new TestFramework("munit.Framework"),
    autoCompilerPlugins := true,
-   addCompilerPlugin("com.github.rssh" %% "dotty-cps-async-compiler-plugin" % "0.9.18-SNAPSHOT")
+   addCompilerPlugin("com.github.rssh" %% "dotty-cps-async-compiler-plugin" % "0.9.18")
 )
 
 
@@ -112,7 +112,7 @@ lazy val streamFs2 = crossProject(JSPlatform, JVMPlatform)
                          commonSettings,
                          name := "cps-async-connect-fs2",
                          libraryDependencies ++= Seq(
-                             "co.fs2" %%% "fs2-core" % "3.7.0",
+                             "co.fs2" %%% "fs2-core" % "3.8.0",
                              "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test
                          )
                       )
@@ -123,7 +123,7 @@ lazy val streamAkka = (project in file("stream-akka")).
                          name := "cps-async-connect-akka-stream",
                          scalacOptions += "-explain",
                          libraryDependencies ++= Seq(
-                            ("com.typesafe.akka" %% "akka-stream" % "2.7.0")
+                            ("com.typesafe.akka" %% "akka-stream" % "2.8.4")
                          )
                       )
 
@@ -156,6 +156,7 @@ lazy val root = (project in file("."))
                            zio2.jvm,  zio2.js, 
                            streamFs2.jvm, streamFs2.js,
                            streamAkka,
+                           streamPekko,
                            probabilityMonad
                 )
                 .settings(

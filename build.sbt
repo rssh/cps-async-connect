@@ -46,9 +46,6 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
     scalaJSUseMainModuleInitializer := true,
   ).jvmSettings(
     scalacOptions ++= Seq( "-unchecked", "-explain")
-  ).nativeSettings(
-    Test / parallelExecution := false,
-    Test / testOptions += Tests.Argument(TestFrameworks.MUnit, "-b -a -s -v")
   )
 
 

@@ -48,8 +48,7 @@ object AsyncChannelApi3:
                         })
     }
 
-  // TODO: introduce subtype(CpsDirect) for conversions and use CpsDirect[IO] here
-  def read(input: AsynchronousFileChannel, bufSize: Int)(using IOResourceDirect): ByteBuffer =
+  def read(input: AsynchronousFileChannel, bufSize: Int)(using CpsDirect[IO]): ByteBuffer =
     await(readM(input, bufSize))
 
   def writeM(output: AsynchronousFileChannel, buffer: ByteBuffer): IO[Int] =
@@ -65,7 +64,7 @@ object AsyncChannelApi3:
     }
   
 
-  def write(output: AsynchronousFileChannel, buffer: ByteBuffer)(using IOResourceDirect): Int =
+  def write(output: AsynchronousFileChannel, buffer: ByteBuffer)(using CpsDirect[IO]): Int =
     await(writeM(output, buffer))
 
 

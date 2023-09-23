@@ -48,6 +48,15 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
     scalacOptions ++= Seq( "-unchecked", "-explain")
   )
 
+lazy val catsEffectLoom = project.in(file("cats-effect-loom"))
+                                 .dependsOn(catsEffect.jvm)
+                                 .settings(
+                                     commonSettings,
+                                     name := "cps-async-connect-cats-effect-loom",
+                                     libraryDependencies += "com.github.rssh" %% "dotty-cps-async-loom" % "0.9.19-SNAPSHOT",
+                                     scalacOptions += "-Xtarget:21"
+                                 )
+
 
 lazy val monix  = crossProject(JSPlatform, JVMPlatform)
   .in(file("monix"))
@@ -150,6 +159,7 @@ lazy val probabilityMonad = (project in file("probability-monad")).
 
 lazy val root = (project in file("."))
                 .aggregate(catsEffect.jvm, catsEffect.js,
+                           catsEffectLoom,
                            monix.jvm, monix.js,
                            scalaz.jvm, scalaz.js , 
                            zio.jvm,  zio.js,

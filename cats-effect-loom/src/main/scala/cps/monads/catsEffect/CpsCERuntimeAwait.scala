@@ -3,26 +3,12 @@ package cps.monads.catsEffect
 import cps.*
 import cats.effect.*
 import cats.effect.std.Dispatcher
+
 import scala.concurrent.blocking
 import java.util.concurrent.CompletableFuture
+import scala.util.control.NonFatal
 
 class CpsCERuntimeAwait[F[_]](dispatcher: Dispatcher[F], async: Async[F]) extends CpsRuntimeAwait[F] {
-
-
-    override def runAsync[A, C <: CpsTryMonadContext[F]](f: C => A)(m: CpsAsyncEffectMonad[F], ctx: C): F[A] = {
-        async.async_[A] { cb =>
-           Thread.startVirtualThread{ () =>
-             val r = try {
-               val a = f(ctx)
-               cb(Right(a))
-             } catch {
-               case ex: Throwable =>
-                 cb(Left(ex))
-             }
-           }
-        }
-    }
-
 
     override def await[A](fa: F[A])(ctx: CpsTryMonadContext[F]): A = {
          import scala.concurrent.ExecutionContext.Implicits.global
@@ -40,11 +26,24 @@ class CpsCERuntimeAwait[F[_]](dispatcher: Dispatcher[F], async: Async[F]) extend
 
 class CpsCERuntimeAwaitProvider[F[_]:Async] extends CpsRuntimeAwaitProvider[F] {
 
-  override def apply[A](op: CpsRuntimeAwait[F] => A)(using CpsTryMonadContext[F], CpsAsyncEffectMonad[F]): F[A] = 
-    Dispatcher.sequential[F].use(dispatcher => summon[Async[F]].delay(op(CpsCERuntimeAwait(dispatcher,summon[Async[F]]))))
+  def runInVirtualThread[A](op: =>A): F[A] =
+    Async[F].async_{ cb =>
+      Thread.ofVirtual().start(() => {
+        try {
+          val r = op
+          cb(Right(r))
+        }catch{
+          case NonFatal(ex) =>
+            cb(Left(ex))
+        }
+      })
+    }
 
-  override def applyAsync[A](op: CpsRuntimeAwait[F] => F[A])(using CpsTryMonadContext[F], CpsAsyncEffectMonad[F]): F[A] = 
-    Dispatcher.sequential[F].use(dispatcher => op(CpsCERuntimeAwait(dispatcher,summon[Async[F]])))
+  override def withRuntimeAwait[A](op: CpsRuntimeAwait[F] => F[A])(using ctx:CpsTryMonadContext[F]): F[A] =
+    Dispatcher.sequential[F].use{dispatcher =>
+       val ra = CpsCERuntimeAwait(dispatcher, summon[Async[F]])
+       ctx.monad.flatten(runInVirtualThread(op(ra)))
+    }
 
 }
 

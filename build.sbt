@@ -14,7 +14,7 @@ Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
    libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % "0.9.19-SNAPSHOT",
-   libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M8" % Test,
+   libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M10" % Test,
    testFrameworks += new TestFramework("munit.Framework"),
    autoCompilerPlugins := true,
    addCompilerPlugin("com.github.rssh" %% "dotty-cps-async-compiler-plugin" % "0.9.19-SNAPSHOT")
@@ -53,7 +53,10 @@ lazy val catsEffectLoom = project.in(file("cats-effect-loom"))
                                  .settings(
                                      commonSettings,
                                      name := "cps-async-connect-cats-effect-loom",
-                                     libraryDependencies += "com.github.rssh" %% "dotty-cps-async-loom" % "0.9.19-SNAPSHOT",
+                                     libraryDependencies ++= Seq(
+                                       "com.github.rssh" %% "dotty-cps-async-loom" % "0.9.19-SNAPSHOT",
+                                       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test
+                                     ),
                                      scalacOptions += "-Xtarget:21"
                                  )
 

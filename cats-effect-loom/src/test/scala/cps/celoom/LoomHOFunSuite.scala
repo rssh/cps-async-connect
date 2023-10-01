@@ -49,6 +49,19 @@ class LoomHOFunSuite extends CatsEffectSuite {
     c
   }
 
+  test("catch exception from failed operation inside runtime await") {
+    val c = async[IO] {
+      val list0 = MyList.create(1, 2, 3, 4, 5)
+      try {
+        val list1 = list0.map[Int](x => await(IO.raiseError(new RuntimeException("test"))))
+        assert(false)
+      } catch {
+        case ex: RuntimeException =>
+          assert(ex.getMessage() == "test")
+      }
+    }
+    c
+  }
 
 
 }

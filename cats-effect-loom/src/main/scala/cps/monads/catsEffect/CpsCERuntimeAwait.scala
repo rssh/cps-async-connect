@@ -4,7 +4,7 @@ import cps.*
 import cats.effect.*
 import cats.effect.std.Dispatcher
 
-import scala.concurrent.blocking
+import scala.concurrent.{ExecutionException, blocking}
 import java.util.concurrent.CompletableFuture
 import scala.util.control.NonFatal
 
@@ -18,7 +18,12 @@ class CpsCERuntimeAwait[F[_]](dispatcher: Dispatcher[F], async: Async[F]) extend
             case scala.util.Failure(ex) => cf.completeExceptionally(ex)
          }
          blocking {
-           cf.get()
+           try {
+             cf.get()
+           } catch {
+              case ex: ExecutionException =>
+                throw ex.getCause()
+           }
          }
     }
 
@@ -33,6 +38,8 @@ class CpsCERuntimeAwaitProvider[F[_]:Async] extends CpsRuntimeAwaitProvider[F] {
           val r = op
           cb(Right(r))
         }catch{
+          case ec: ExecutionException =>
+            cb(Left(ec.getCause()))
           case NonFatal(ex) =>
             cb(Left(ex))
         }

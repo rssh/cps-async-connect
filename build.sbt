@@ -178,6 +178,7 @@ lazy val root = (project in file("."))
                            scalaz.jvm, scalaz.js , 
                            zio.jvm,  zio.js,
                            zio2.jvm,  zio2.js, 
+                           zio2Loom,
                            streamFs2.jvm, streamFs2.js,
                            streamAkka,
                            streamPekko,

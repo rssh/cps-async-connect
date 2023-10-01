@@ -116,6 +116,17 @@ lazy val zio2  = crossProject(JSPlatform,JVMPlatform)  //TODO: submit bug to zio
                             "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" )
   )
 
+lazy val zio2Loom = project.in(file("zio2-loom"))
+  .dependsOn(zio2.jvm)
+  .settings(
+    commonSettings,
+    name := "cps-async-connect-zio2-loom",
+    libraryDependencies ++= Seq(
+      "com.github.rssh" %% "dotty-cps-async-loom" % "0.9.19-SNAPSHOT"
+    ),
+    scalacOptions += "-Xtarget:21"
+  )
+
 
 lazy val streamFs2 = crossProject(JSPlatform, JVMPlatform)
                      .in(file("stream-fs2"))

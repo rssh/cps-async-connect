@@ -2,9 +2,9 @@ import sbt.Keys.autoCompilerPlugins
 
 //val dottyVersion = "3.4.0-RC1-bin-SNAPSHOT"
 val dottyVersion = "3.3.1"
-val dottyCpsAsyncVersion = "0.9.19-SNAPSHOT"
+val dottyCpsAsyncVersion = "0.9.19"
 
-ThisBuild/version := "0.9.19-SNAPSHOT"
+ThisBuild/version := "0.9.19"
 ThisBuild/versionScheme := Some("semver-spec")
 ThisBuild/organization := "com.github.rssh"
 ThisBuild/resolvers += Resolver.mavenLocal

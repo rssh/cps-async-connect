@@ -63,5 +63,22 @@ class LoomHOFunSuite extends CatsEffectSuite {
     c
   }
 
+  def topNScored[A](c:Iterable[A], n: Int)(score: A=>Double): Seq[(A,Double)] = {
+    c.map(x => (x, score(x))).toSeq.sortBy(- _._2).take(n)
+  }
+
+  def score(x:Int):IO[Double] = {
+    IO.delay(Math.floor((1.0/x) * 1000))
+  }
+
+  test("select top 3 scored") {
+    val c = async[IO] {
+      val list0 = List(1,2,3,4,5,6,7)
+      val list1 = topNScored(list0, 3)(x => await(score(x)))
+      println(s"list1 = ${list1}")
+      assert(list1 == Seq((1,1000.0), (2,500.0), (3,333.0)))
+    }
+    c
+  }
 
 }

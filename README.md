@@ -9,6 +9,13 @@
   libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect" % version  
 ```
 
+And if you want to use JDK-21 virtual threads for translation of high-order function arguments:
+
+```
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect-loom" % version  
+```
+
+
 
 Usage:
 
@@ -62,6 +69,8 @@ instead
     fetchData().map(data => f.write(data))
  })  
 ```
+
+
 
 # monix:
 
@@ -122,6 +131,14 @@ for 2.x:
 ```
   libraryDependencies += "com.github.rssh" %%% "cps-async-connect-zio2" % version
 ```
+
+and for loom support on JDK21+ :
+
+```
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-zio2-loom" % version
+```
+
+
 
 Usage:
 

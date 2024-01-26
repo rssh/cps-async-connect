@@ -44,7 +44,7 @@ import cps.*
  * ```
  *     async[IO] {
  *        ....  
- *        useing(openFile){ buffer =>
+ *        using(openFile){ buffer =>
  *            await(doSomething)
  *            buffer.write(r)
  *            result

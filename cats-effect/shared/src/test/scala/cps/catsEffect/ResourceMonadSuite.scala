@@ -41,7 +41,7 @@ class FileMinimalEmu(val name: String, val ref: Ref[IO,Vector[Array[Byte]]]):
   def _readAll(v: Vector[Array[Byte]] ): Array[Byte] =
       val len = v.map(_.length).sum
       val retval = new Array[Byte](len)
-      v.foldLeft(0){ (s,e) =>
+      val _ = v.foldLeft(0){ (s,e) =>
         System.arraycopy(e,0,retval,s,e.length)
         s + e.length
       }
@@ -79,19 +79,18 @@ class ResourceMonadSuite extends CatsEffectSuite {
     }
 
 
-    test("use cats resource as scope with automaticColoring") {
-      import cps.automaticColoring.given
-      import scala.language.implicitConversions
+    test("use cats resource as scope [removed automaticColoring]") {
       val prg = asyncScope[IO] {
-          val input = createDataEmu("AAA AC")
-          val output = createFileEmu("output")
-          output.write(input.data.getBytes())
-          output.write("\nBBB BC".getBytes())
+          val input = await(createDataEmu("AAA AC"))
+          val output = await(createFileEmu("output"))
+          await(output.write(input.data.getBytes()))
+          await(output.write("\nBBB BC".getBytes()))
           val data = output.readAll()
-          (input.closed, output.closed, await(input), await(output), await(data))
+          (input.closed, output.closed, input, output, await(data))
       }
       prg.map{ v =>
          val (inputClosedInside, outputClosedInside, input, output, data) = v
+         println(s"data=$data, new String(data)=${new String(data)}")
          assert(!inputClosedInside)
          assert(!outputClosedInside)
          assert(input.closed)

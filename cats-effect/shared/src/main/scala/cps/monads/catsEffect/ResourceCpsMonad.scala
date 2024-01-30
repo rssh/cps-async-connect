@@ -49,7 +49,3 @@ class AsyncScopeInferArg[F[_],C <: CpsMonadContext[[A]=>>Resource[F,A]]](using a
  */
 def asyncScope[F[_]](using m:CpsTryMonad[[A]=>>Resource[F,A]], mc:MonadCancel[F,Throwable]) = AsyncScopeInferArg(using m, mc)
 
-given catsResourceMemoization[F[_]](using Concurrent[[X]=>>Resource[F,X]]):CpsMonadMemoization.Pure[[X]=>>Resource[F,X]] with
-
-   def apply[T](ft: Resource[F,T]): Resource[F,Resource[F,T]] =
-      summon[Concurrent[[X]=>>Resource[F,X]]].memoize(ft)

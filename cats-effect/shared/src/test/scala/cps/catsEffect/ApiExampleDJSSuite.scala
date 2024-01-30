@@ -1,6 +1,5 @@
 package cps.catsEffect
 
-import scala.language.implicitConversions
 import scala.util.*
 import scala.concurrent.duration.*
 
@@ -9,7 +8,6 @@ import cats.effect.*
 
 
 import cps.*
-import cps.automaticColoring.given
 
 import cps.monads.catsEffect.{given,*}
 
@@ -19,15 +17,15 @@ import munit.CatsEffectSuite
 object TestFuns {
 
   def myFun(using RunContext): IO[Boolean] = async[IO] {
-    val results1 = talkToServer("request1", None)
-    IO.sleep(100.millis)
-    val results2 = talkToServer("request2", Some(results1.data)) 
+    val results1 = await(talkToServer("request1", None))
+    await(IO.sleep(100.millis))
+    val results2 = await(talkToServer("request2", Some(results1.data)))
     if results2.isOk then
-       writeToFile(results2.data)
-       IO.println("done")
+       await(writeToFile(results2.data))
+       await(IO.println("done"))
        true
     else
-       IO.println("abort abort abort")
+       await(IO.println("abort abort abort"))
        false
   }
 

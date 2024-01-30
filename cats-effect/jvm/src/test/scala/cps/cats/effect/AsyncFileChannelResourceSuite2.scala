@@ -22,8 +22,6 @@ import java.nio.file.Paths
 import java.nio.file.Files
 import java.nio.file.{OpenOption, StandardOpenOption}
 
-import cps.automaticColoring.given
-import scala.language.implicitConversions
 
 
 object AsyncChannelApi:
@@ -66,14 +64,14 @@ class AsyncFileChannelResourceSuite2 extends CatsEffectSuite {
         import StandardOpenOption.*
         //implicit val printCode = cps.macros.flags.PrintCode
         val prg = asyncScope[IO] {
-            val input = open(Paths.get("cats-effect/jvm/src/test/resources/input"),READ)
+            val input = await(open(Paths.get("cats-effect/jvm/src/test/resources/input"),READ))
             val outputName = Files.createTempFile("output-async2",null)
-            val output = open(outputName,WRITE, CREATE, TRUNCATE_EXISTING)
+            val output = await(open(outputName,WRITE, CREATE, TRUNCATE_EXISTING))
             var nBytes = 0
             while 
-              val buffer = read(input, BUF_SIZE)
+              val buffer = await(read(input, BUF_SIZE))
               val cBytes = buffer.position()
-              write(output, buffer)
+              val _ = await(write(output, buffer))
               nBytes += cBytes
               cBytes == BUF_SIZE
             do ()

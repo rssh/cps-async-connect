@@ -71,20 +71,19 @@ class StupidFizzBuzzSuite extends CatsEffectSuite {
     }
   }
 
-  test("make sure that FizBuzz run N times in async loop with automatic coloring") {
-    import cps.automaticColoring.given
+  test("make sure that FizBuzz run N times in async loop [removed: with automatic coloring]") {
     val run = async {
-       val logger = ToyLogger.make()
-       val ctr = IO.ref(0)
+       val logger = await(ToyLogger.make())
+       val ctr = await(IO.ref(0))
        while {
           //await(IO.sleep(100.millisecond))
-          val v = ctr.get
-          logger.log(await(v).toString)
+          val v = await(ctr.get)
+          await(logger.log(v.toString))
           if v % 3 == 0 then 
-             logger.log("fizz")
+             await(logger.log("fizz"))
           if v % 5 == 0 then 
-             logger.log("buzz")
-          ctr.update(_ + 1)
+             await(logger.log("buzz"))
+          await(ctr.update(_ + 1))
           v < 10 
        } do ()
        await(logger.all())

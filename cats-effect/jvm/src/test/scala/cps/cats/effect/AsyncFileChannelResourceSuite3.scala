@@ -90,7 +90,7 @@ class AsyncFileChannelResourceSuite3 extends CatsEffectSuite {
             while 
               val buffer = read(input, BUF_SIZE)
               val cBytes = buffer.position()
-              write(output, buffer)
+              val wBytes = write(output, buffer)
               nBytes += cBytes
               cBytes == BUF_SIZE
             do ()

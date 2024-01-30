@@ -22,8 +22,6 @@ import java.nio.file.Paths
 import java.nio.file.Files
 import java.nio.file.{OpenOption, StandardOpenOption}
 
-import cps.automaticColoring.given
-import scala.language.implicitConversions
 
 
 
@@ -47,8 +45,8 @@ class AsyncFileChannelResourceSuiteMin extends CatsEffectSuite {
         //implicit val debugLavel = cps.macros.flags.DebugLevel(15) 
         try {
           val prg = asyncScope[IO] {
-            val output = openAsyncFileChannelM("outputName")
-            writeM(output, 1)
+            val output = await(openAsyncFileChannelM("outputName"))
+            val _ = await(writeM(output, 1))
             1
           }
           prg.recover{case e => e.getMessage}

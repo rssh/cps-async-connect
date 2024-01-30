@@ -83,12 +83,5 @@ given catsAsync[F[_]](using Async[F], NotGiven[Concurrent[F]]): CpsAsyncMonadIns
 
 given catsConcurrent[F[_]](using Concurrent[F], Async[F]): CpsConcurrentEffectMonadInstanceContext[F] = CatsConcurrent[F]()
 
-given catsMemoization[F[_]](using Concurrent[F]) :CpsMonadMemoization.Pure[F] with
-    
-  def apply[T](ft:F[T]): F[F[T]] =
-    summon[Concurrent[F]].memoize(ft)
-
-inline transparent given catsUnitValueDiscard[F[_]](using CpsAsyncMonad[F]): ValueDiscard[F[Unit]] = AwaitValueDiscard[F,Unit]
-inline transparent given catsIntValueDiscard[F[_]](using CpsAsyncMonad[F]): ValueDiscard[F[Int]] = AwaitValueDiscard[F,Int]
 
 

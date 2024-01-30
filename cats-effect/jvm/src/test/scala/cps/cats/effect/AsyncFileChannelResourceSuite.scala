@@ -11,6 +11,7 @@ import cats.effect.kernel.*
 import cps.*
 import cps.monads.{given,*}
 import cps.monads.catsEffect.{given,*}
+import cps.syntax.*
 
 import munit.CatsEffectSuite
 
@@ -22,8 +23,6 @@ import java.nio.file.Paths
 import java.nio.file.Files
 import java.nio.file.{OpenOption, StandardOpenOption}
 
-import cps.automaticColoring.given
-import scala.language.implicitConversions
 
 
 
@@ -65,16 +64,16 @@ class AsyncFileChannelResourceSuite extends CatsEffectSuite {
         //implicit val printCode = cps.macros.flags.PrintCode
         //implicit val debugLavel = cps.macros.flags.DebugLevel(1) 
         val prg = asyncScope[IO] {
-            val input = openAsyncFileChannel(Paths.get("cats-effect/jvm/src/test/resources/input"),READ)
+            val input = ! openAsyncFileChannel(Paths.get("cats-effect/jvm/src/test/resources/input"),READ)
             val outputName = Files.createTempFile("output-async",null)
-            val output = openAsyncFileChannel(outputName,WRITE, CREATE, TRUNCATE_EXISTING)
+            val output = ! openAsyncFileChannel(outputName,WRITE, CREATE, TRUNCATE_EXISTING)
             val buffer = ByteBuffer.allocate(BUF_SIZE)
             var nBytes = 0
             var cBytes = 0
             while 
-              cBytes = read(input, buffer.clear())
+              cBytes = ! read(input, buffer.clear())
               if (cBytes > 0) then
-                  write(output, buffer)
+                  !write(output, buffer)
                   nBytes += cBytes
               cBytes == BUF_SIZE
             do ()

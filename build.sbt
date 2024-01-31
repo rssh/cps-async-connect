@@ -102,9 +102,9 @@ lazy val zio2  = crossProject(JSPlatform,JVMPlatform)
     commonSettings,
     name := "cps-async-connect-zio2",
     libraryDependencies ++= Seq(
-      "dev.zio" %%% "zio" % "2.0.18",
-      "dev.zio" %%% "zio-managed" % "2.0.18",
-      "dev.zio" %%% "zio-streams" % "2.0.18",
+      "dev.zio" %%% "zio" % "2.0.21",
+      "dev.zio" %%% "zio-managed" % "2.0.21",
+      "dev.zio" %%% "zio-streams" % "2.0.21",
     )
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
@@ -115,8 +115,7 @@ lazy val zio2  = crossProject(JSPlatform,JVMPlatform)
     ),
   ).jvmSettings(
     scalacOptions ++= Seq( "-unchecked", "-Ydebug-trace", "-Ydebug-names", "-Xprint-types",
-                            "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" ,
-                            "-Wvalue-discard", "-Wnonunit-statement"
+                            "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" 
                            )
   )
 

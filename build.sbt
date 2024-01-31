@@ -2,9 +2,9 @@ import sbt.Keys.autoCompilerPlugins
 
 //val dottyVersion = "3.4.0-RC1-bin-SNAPSHOT"
 val dottyVersion = "3.3.1"
-val dottyCpsAsyncVersion = "0.9.19"
+val dottyCpsAsyncVersion = "0.9.20"
 
-ThisBuild/version := "0.9.19"
+ThisBuild/version := "0.9.20"
 ThisBuild/versionScheme := Some("semver-spec")
 ThisBuild/organization := "com.github.rssh"
 ThisBuild/resolvers += Resolver.mavenLocal
@@ -17,6 +17,7 @@ lazy val commonSettings = Seq(
    libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % dottyCpsAsyncVersion,
    libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M10" % Test,
    testFrameworks += new TestFramework("munit.Framework"),
+   scalacOptions ++= Seq( "-Wvalue-discard", "-Wnonunit-statement"),
    autoCompilerPlugins := true,
    addCompilerPlugin("com.github.rssh" %% "dotty-cps-async-compiler-plugin" % dottyCpsAsyncVersion)
 )
@@ -114,7 +115,9 @@ lazy val zio2  = crossProject(JSPlatform,JVMPlatform)
     ),
   ).jvmSettings(
     scalacOptions ++= Seq( "-unchecked", "-Ydebug-trace", "-Ydebug-names", "-Xprint-types",
-                            "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" )
+                            "-Ydebug", "-uniqid", "-Ycheck:macros",  "-Yprint-syms" ,
+                            "-Wvalue-discard", "-Wnonunit-statement"
+                           )
   )
 
 lazy val zio2Loom = project.in(file("zio2-loom"))

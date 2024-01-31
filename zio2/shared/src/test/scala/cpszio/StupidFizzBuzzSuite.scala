@@ -47,16 +47,15 @@ class StupidFizzBuzzSuite extends FunSuite {
   }
 
 
-   test("minimal automatic coloring") {
-      import cps.automaticColoring.given
-      import scala.language.implicitConversions
-
+   test("minimal [automatic coloring removed]") {
+     import cps.syntax.{*,given}
+     import scala.language.postfixOps
       //implicit val printCode = cps.macroFlags.PrintCode
 
       val program = asyncRIO[TLogging.Service] {
-         val ctr = Ref.make(0)
-         val v = await(ctr).get
-         TLog.logMsg("AAA")
+         val ctr = cps.syntax.unary_!( Ref.make(0) )
+         val v = await(ctr.get)
+         cps.syntax.unary_!(TLog.logMsg("AAA"))
          val records: IndexedSeq[TLogging.LogRecord] = await(TLog.lastRecords(20))
          records
       }
@@ -66,10 +65,7 @@ class StupidFizzBuzzSuite extends FunSuite {
    }
 
    
-   test("make sure that FizBuzz run N times in async loop with automatic coloring") {
-
-      import cps.automaticColoring.given
-      import scala.language.implicitConversions
+   test("make sure that FizBuzz run N times in async loop [ automatic coloring removed]") {
 
       //implicit val printCode = cps.macroFlags.PrintCode
       //implicit val printTree = cps.macroFlags.PrintTree
@@ -78,15 +74,15 @@ class StupidFizzBuzzSuite extends FunSuite {
       val program = asyncRIO[TLogging.Service] {
          // TODO: find issue, while ctr.get search for option.
          //  Now, let's do type ascription to force await.
-         val ctr: Ref[Int] = Ref.make(0)
+         val ctr: Ref[Int] = await(Ref.make(0))
          while {
-            val v = ctr.get
-            TLog.logMsg(await(v).toString)
+            val v = await(ctr.get)
+            await(TLog.logMsg(v.toString))
             if v % 3 == 0 then 
-               TLog.logMsg("fizz")
+               await(TLog.logMsg("fizz"))
             if v % 5 == 0 then 
-               TLog.logMsg("buzz")
-            ctr.update(_ + 1)
+               await(TLog.logMsg("buzz"))
+            await(ctr.update(_ + 1))
             v < 10 
          } do ()
          await(TLog.lastRecords(20))

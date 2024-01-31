@@ -56,11 +56,4 @@ given taskToFuture(using Scheduler): CpsMonadConversion[Task,Future] with
     def apply[T](ft: Task[T]):Future[T] = ft.runToFuture
 
 
-given taskMemoization :CpsMonadMemoization.Inplace[Task] with
-    
-  def apply[T](ft:Task[T]): Task[T] =
-      ft.memoize
-
-inline transparent given taskValueDiscard: ValueDiscard[Task[Unit]] = AwaitValueDiscard[Task,Unit]
-
 

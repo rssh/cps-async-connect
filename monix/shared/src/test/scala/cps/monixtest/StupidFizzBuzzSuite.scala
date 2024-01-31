@@ -38,18 +38,19 @@ class StupidFizzBuzzSuite extends FunSuite {
     }.runToFuture
   }
 
-  test("make sure that FizBuzz run N times in async loop with automatic coloring") {
-    import cps.automaticColoring.given
+  test("make sure that FizBuzz run N times in async loop [automatic coloring removed]") {
+    import cps.syntax.{*,given}
     val run = async {
        val logger = ToyLogger.make()
        val ctr = Atomic(0)
        while {
           val v = ctr.get()
-          logger.log(v.toString)
+          // ! cause compiler error
+          await(logger.log(v.toString))
           if v % 3 == 0 then 
-             logger.log("fizz")
+             ! logger.log("fizz")
           if v % 5 == 0 then 
-             logger.log("buzz")
+             ! logger.log("buzz")
           ctr += 1
           v < 10 
        } do ()

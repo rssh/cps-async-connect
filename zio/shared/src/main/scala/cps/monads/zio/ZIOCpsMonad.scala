@@ -92,15 +92,7 @@ given futureZIOConversion[R,E](using zio.Runtime[R]):
         summon[Runtime[R]].unsafeRunToFuture(ft.mapError(e => GenericThrowableAdapter.toThrowable(e)))
 
 
-given zioMemoization[R,E]: CpsMonadMemoization.Dynamic[[X]=>>ZIO[R,E,X]] with {}
-
  
 
-given zioDynamicMemoizationAp[R1,E1,R2>:R1,E2<:E1,T]: CpsMonadMemoization.DynamicAp[[X]=>>ZIO[R1,E1,X],ZIO[R2,E2,T]] with      
 
-   def apply(ft:ZIO[R2,E2,T]):ZIO[R1,E1,ZIO[R2,E2,T]] =
-        ft.memoize
-
-
-inline transparent given awaitValueDiscard[R,E](using CpsMonad[[X]=>>ZIO[R,E,X]]): ValueDiscard[ZIO[R,E,Unit]] = AwaitValueDiscard[[X]=>>ZIO[R,E,X],Unit]
 

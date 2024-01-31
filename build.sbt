@@ -148,8 +148,9 @@ lazy val streamAkka = (project in file("stream-akka")).
                          commonSettings,
                          name := "cps-async-connect-akka-stream",
                          scalacOptions += "-explain",
+                         resolvers += "Akka library repository".at("https://repo.akka.io/maven"),
                          libraryDependencies ++= Seq(
-                            ("com.typesafe.akka" %% "akka-stream" % "2.9.0-M2")
+                            ("com.typesafe.akka" %% "akka-stream" % "2.9.1")
                          )
                       )
 

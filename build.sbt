@@ -28,8 +28,8 @@ lazy val scalaz  = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     name := "cps-async-connect-scalaz",
-    libraryDependencies += "org.scalaz" %%% "scalaz-effect" % "7.4.0-M13" ,
-    libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.4.0-M13" 
+    libraryDependencies += "org.scalaz" %%% "scalaz-effect" % "7.4.0-M14" ,
+    libraryDependencies += "org.scalaz" %%% "scalaz-core" % "7.4.0-M14" 
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     scalaJSUseMainModuleInitializer := true

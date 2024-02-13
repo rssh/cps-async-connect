@@ -49,3 +49,8 @@ class AsyncScopeInferArg[F[_],C <: CpsMonadContext[[A]=>>Resource[F,A]]](using a
  */
 def asyncScope[F[_]](using m:CpsTryMonad[[A]=>>Resource[F,A]], mc:MonadCancel[F,Throwable]) = AsyncScopeInferArg(using m, mc)
 
+/**
+ * Synonym for `asyncScope`.
+ **/
+def reifyScope[F[_]](using m:CpsTryMonad[[A]=>>Resource[F,A]], mc:MonadCancel[F,Throwable]) = AsyncScopeInferArg(using m, mc)
+

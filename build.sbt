@@ -1,10 +1,10 @@
 import sbt.Keys.autoCompilerPlugins
 
 //val dottyVersion = "3.4.0-RC1-bin-SNAPSHOT"
-val dottyVersion = "3.3.1"
-val dottyCpsAsyncVersion = "0.9.20"
+val dottyVersion = "3.3.2"
+val dottyCpsAsyncVersion = "0.9.21"
 
-ThisBuild/version := "0.9.20"
+ThisBuild/version := "0.9.21"
 ThisBuild/versionScheme := Some("semver-spec")
 ThisBuild/organization := "com.github.rssh"
 ThisBuild/resolvers += Resolver.mavenLocal
@@ -41,7 +41,7 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     name := "cps-async-connect-cats-effect",
-    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.5.3",
+    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.5.4",
     libraryDependencies += "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
@@ -138,7 +138,7 @@ lazy val streamFs2 = crossProject(JSPlatform, JVMPlatform)
                          commonSettings,
                          name := "cps-async-connect-fs2",
                          libraryDependencies ++= Seq(
-                             "co.fs2" %%% "fs2-core" % "3.9.4",
+                             "co.fs2" %%% "fs2-core" % "3.10.2",
                              "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test
                          )
                       )
@@ -150,7 +150,7 @@ lazy val streamAkka = (project in file("stream-akka")).
                          scalacOptions += "-explain",
                          resolvers += "Akka library repository".at("https://repo.akka.io/maven"),
                          libraryDependencies ++= Seq(
-                            ("com.typesafe.akka" %% "akka-stream" % "2.9.1")
+                            ("com.typesafe.akka" %% "akka-stream" % "2.9.2")
                          )
                       )
 

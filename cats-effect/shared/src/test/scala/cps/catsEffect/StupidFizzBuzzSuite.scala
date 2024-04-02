@@ -97,6 +97,7 @@ class StupidFizzBuzzSuite extends CatsEffectSuite {
   }
 
   test("make sure that FizBuzz run N times with direct context") {
+    //implicit val printCode = cps.macros.flags.PrintCode
     val run = async {
       val logger = DToyLogger.make()
       val ctr = IO.directRefOf(0)

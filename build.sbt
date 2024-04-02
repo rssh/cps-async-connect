@@ -2,7 +2,7 @@ import sbt.Keys.autoCompilerPlugins
 
 //val dottyVersion = "3.4.0-RC1-bin-SNAPSHOT"
 val dottyVersion = "3.3.3"
-val dottyCpsAsyncVersion = "0.9.21-SNAPSHOT"
+val dottyCpsAsyncVersion = "0.9.21"
 
 ThisBuild/version := "0.9.21"
 ThisBuild/versionScheme := Some("semver-spec")
@@ -42,7 +42,7 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
     commonSettings,
     name := "cps-async-connect-cats-effect",
     libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.5.4",
-    libraryDependencies += "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test
+    libraryDependencies += "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M4" % Test
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     scalaJSUseMainModuleInitializer := true,
@@ -57,7 +57,7 @@ lazy val catsEffectLoom = project.in(file("cats-effect-loom"))
                                      name := "cps-async-connect-cats-effect-loom",
                                      libraryDependencies ++= Seq(
                                        "com.github.rssh" %% "dotty-cps-async-loom" % dottyCpsAsyncVersion,
-                                       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test
+                                       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M4" % Test
                                      ),
                                      scalacOptions += "-Xtarget:21"
                                  )

@@ -29,6 +29,8 @@ object TestFuns {
        false
   }
 
+  
+
   case class Result(
     isOk: Boolean,
     data: String

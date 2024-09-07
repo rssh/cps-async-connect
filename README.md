@@ -15,7 +15,11 @@ And if you want to use JDK-21 virtual threads for translation of high-order func
   libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect-loom" % version  
 ```
 
+If you use scala lts versinm then use artefacts with lts suffix:
 
+```
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect-lts" % version  
+```
 
 Usage:
 
@@ -78,6 +82,7 @@ instead
   libraryDependencies += "com.github.rssh" %%% "cps-async-connect-monix" % version  
 ```
 
+(or with '-lts' for scala-lts version)
 
 Usage:
 

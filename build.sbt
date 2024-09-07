@@ -102,7 +102,7 @@ lazy val zio2  = crossProject(JSPlatform,JVMPlatform)
     commonSettings,
     name := "cps-async-connect-zio2",
     libraryDependencies ++= Seq(
-      "dev.zio" %%% "zio" % "2.0.21",
+      "dev.zio" %%% "zio" % "2.1.9",
       "dev.zio" %%% "zio-managed" % "2.1.9",
       "dev.zio" %%% "zio-streams" % "2.1.9",
     )

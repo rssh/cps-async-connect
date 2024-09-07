@@ -1,10 +1,10 @@
 import sbt.Keys.autoCompilerPlugins
 
 //val dottyVersion = "3.4.0-RC1-bin-SNAPSHOT"
-val dottyVersion = "3.3.3"
-val dottyCpsAsyncVersion = "0.9.21"
+val dottyVersion = "3.5.0"
+val dottyCpsAsyncVersion = "0.9.22"
 
-ThisBuild/version := "0.9.21"
+ThisBuild/version := "0.9.22"
 ThisBuild/versionScheme := Some("semver-spec")
 ThisBuild/organization := "com.github.rssh"
 ThisBuild/resolvers += Resolver.mavenLocal
@@ -15,7 +15,7 @@ Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
    libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % dottyCpsAsyncVersion,
-   libraryDependencies += "org.scalameta" %%% "munit" % "1.0.0-M11" % Test,
+   libraryDependencies += "org.scalameta" %%% "munit" % "1.0.1" % Test,
    testFrameworks += new TestFramework("munit.Framework"),
    scalacOptions ++= Seq( "-Wvalue-discard", "-Wnonunit-statement"),
    autoCompilerPlugins := true,
@@ -42,7 +42,7 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
     commonSettings,
     name := "cps-async-connect-cats-effect",
     libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.5.4",
-    libraryDependencies += "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M4" % Test
+    libraryDependencies += "org.typelevel" %%% "munit-cats-effect" % "2.0.0" % Test
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     scalaJSUseMainModuleInitializer := true,
@@ -57,7 +57,7 @@ lazy val catsEffectLoom = project.in(file("cats-effect-loom"))
                                      name := "cps-async-connect-cats-effect-loom",
                                      libraryDependencies ++= Seq(
                                        "com.github.rssh" %% "dotty-cps-async-loom" % dottyCpsAsyncVersion,
-                                       "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M4" % Test
+                                       "org.typelevel" %%% "munit-cats-effect" % "2.0.0" % Test
                                      ),
                                      scalacOptions += "-Xtarget:21"
                                  )
@@ -88,8 +88,8 @@ lazy val zio  = crossProject(JSPlatform, JVMPlatform)
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     //scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
-      "io.github.cquiroz" %%% "scala-java-time" % "2.3.0",
-      "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.3.0"
+      "io.github.cquiroz" %%% "scala-java-time" % "2.6.0",
+      "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.6.0"
     ),
   ).jvmSettings(
     scalacOptions ++= Seq( "-unchecked", "-Ydebug-trace", "-Ydebug-names", "-Xprint-types",
@@ -103,15 +103,15 @@ lazy val zio2  = crossProject(JSPlatform,JVMPlatform)
     name := "cps-async-connect-zio2",
     libraryDependencies ++= Seq(
       "dev.zio" %%% "zio" % "2.0.21",
-      "dev.zio" %%% "zio-managed" % "2.0.21",
-      "dev.zio" %%% "zio-streams" % "2.0.21",
+      "dev.zio" %%% "zio-managed" % "2.1.9",
+      "dev.zio" %%% "zio-streams" % "2.1.9",
     )
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
     //scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
-      "io.github.cquiroz" %%% "scala-java-time" % "2.4.0-M1",
-      "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.4.0-M1"
+      "io.github.cquiroz" %%% "scala-java-time" % "2.6.0",
+      "io.github.cquiroz" %%% "scala-java-time-tzdb" % "2.6.0"
     ),
   ).jvmSettings(
     scalacOptions ++= Seq( "-unchecked", "-Ydebug-trace", "-Ydebug-names", "-Xprint-types",
@@ -138,8 +138,8 @@ lazy val streamFs2 = crossProject(JSPlatform, JVMPlatform)
                          commonSettings,
                          name := "cps-async-connect-fs2",
                          libraryDependencies ++= Seq(
-                             "co.fs2" %%% "fs2-core" % "3.10.2",
-                             "org.typelevel" %%% "munit-cats-effect" % "2.0.0-M3" % Test
+                             "co.fs2" %%% "fs2-core" % "3.11.0",
+                             "org.typelevel" %%% "munit-cats-effect" % "2.0.0" % Test
                          )
                       )
 
@@ -150,7 +150,7 @@ lazy val streamAkka = (project in file("stream-akka")).
                          scalacOptions += "-explain",
                          resolvers += "Akka library repository".at("https://repo.akka.io/maven"),
                          libraryDependencies ++= Seq(
-                            ("com.typesafe.akka" %% "akka-stream" % "2.9.2")
+                            ("com.typesafe.akka" %% "akka-stream" % "2.9.5")
                          )
                       )
 
@@ -160,7 +160,7 @@ lazy val streamPekko = (project in file("stream-pekko")).
     name := "cps-async-connect-pekko-stream",
     scalacOptions += "-explain",
     libraryDependencies ++= Seq(
-      ("org.apache.pekko" %% "pekko-stream" % "1.0.2")
+      ("org.apache.pekko" %% "pekko-stream" % "1.1.0")
     )
   )
 

@@ -35,19 +35,61 @@ class CatsMonadThrow[F[_]](using MonadThrow[F]) extends CatsMonad[F] with CpsTry
     summon[MonadThrow[F]].redeemWith(fa)( ex => f(Failure(ex)), a => f(Success(a)) )
 
 
-class CatsAsync[F[_]](using Async[F]) extends CatsMonadThrow[F] with CpsAsyncEffectMonadInstanceContext[F]:
+class CatsMonadThrowCancel[F[_]](using F: MonadCancel[F, Throwable]) extends CatsMonadThrow[F] with CpsTryMonadInstanceContext[F]:
 
-  def adoptCallbackStyle[A](source: (Try[A]=>Unit) => Unit): F[A] =
-    def adoptIOCallback(ioCallback: Either[Throwable, A]=>Unit): Try[A]=>Unit = {
-       case Failure(ex) => ioCallback(Left(ex))
-       case Success(a) => ioCallback(Right(a))
+  
+  override def withAction[A](fa: F[A])(action: => Unit): F[A] = {
+    F.guarantee(fa,
+      try {
+        F.pure(action)
+      } catch {
+        case NonFatal(ex) => error(ex)
+      }
+    )
+  }
+
+  override def withAsyncAction[A](fa: F[A])(action: => F[Unit]): F[A] = {
+    F.guarantee(fa,action)
+  }
+
+  override def withAsyncFinalizer[A](fa: => F[A])(f: => F[Unit]): F[A] = {
+    withAsyncAction(tryImpure(fa))(f)
+  }
+  
+
+
+object CatsAsyncHelper:
+
+  def adoptCallbackStyle[F[_],A](source: (Try[A]=>Unit) => Unit)(using Async[F]): F[A] = {
+    def adoptIOCallback(ioCallback: Either[Throwable, A] => Unit): Try[A] => Unit = {
+      case Failure(ex) => ioCallback(Left(ex))
+      case Success(a) => ioCallback(Right(a))
     }
+
     summon[Async[F]].async_ {
       ioCallback => source(adoptIOCallback(ioCallback))
     }
+  }
+
+end CatsAsyncHelper
 
 
-class CatsConcurrent[F[_]](using Concurrent[F], Async[F]) extends CatsAsync[F] 
+class CatsAsync[F[_]](using Async[F]) extends CatsMonadThrow[F] with CpsAsyncEffectMonadInstanceContext[F]:
+
+  def adoptCallbackStyle[A](source: (Try[A]=>Unit) => Unit): F[A] =
+    CatsAsyncHelper.adoptCallbackStyle[F,A](source)
+
+end CatsAsync
+
+class CatsAsyncCancel[F[_]](using Async[F], MonadCancel[F, Throwable]) extends CatsMonadThrowCancel[F] with CpsAsyncEffectMonadInstanceContext[F]:
+
+  def adoptCallbackStyle[A](source: (Try[A]=>Unit) => Unit): F[A] =
+    CatsAsyncHelper.adoptCallbackStyle(source)
+
+end CatsAsyncCancel
+
+
+class CatsConcurrent[F[_]](using Concurrent[F], Async[F], MonadCancel[F, Throwable]) extends CatsAsyncCancel[F]
                                                                    with CpsConcurrentEffectMonadInstanceContext[F]:
 
   type Spawned[A] = Fiber[F,Throwable,A]
@@ -77,11 +119,14 @@ class CatsConcurrent[F[_]](using Concurrent[F], Async[F]) extends CatsAsync[F]
 
 given catsMonadPure[F[_]](using Monad[F], NotGiven[MonadThrow[F]]): CpsPureMonadInstanceContext[F] = CatsMonadPure[F]()
 
-given catsMonadThrow[F[_]](using MonadThrow[F], NotGiven[Async[F]]): CpsTryMonadInstanceContext[F] = CatsMonadThrow[F]()
+given catsMonadThrow[F[_]](using MonadThrow[F],  NotGiven[Async[F]]): CpsTryMonadInstanceContext[F] = CatsMonadThrow[F]()
 
-given catsAsync[F[_]](using Async[F], NotGiven[Concurrent[F]]): CpsAsyncMonadInstanceContext[F] = CatsAsync[F]()
+given catsMonadThrowCancel[F[_]](using MonadCancel[F, Throwable], NotGiven[Async[F]]): CatsMonadThrowCancel[F] = CatsMonadThrowCancel[F]()
 
-given catsConcurrent[F[_]](using Concurrent[F], Async[F]): CpsConcurrentEffectMonadInstanceContext[F] = CatsConcurrent[F]()
+
+given catsAsync[F[_]](using Async[F],  NotGiven[Concurrent[F]], NotGiven[MonadCancel[F,Throwable]]): CatsAsync[F] = CatsAsync[F]()
+
+given catsConcurrent[F[_]](using Concurrent[F], Async[F], MonadCancel[F,Throwable]): CpsConcurrentEffectMonadInstanceContext[F] = CatsConcurrent[F]()
 
 
 

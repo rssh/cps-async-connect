@@ -39,17 +39,16 @@ class CatsMonadThrowCancel[F[_]](using F: MonadCancel[F, Throwable]) extends Cat
 
   
   override def withAction[A](fa: F[A])(action: => Unit): F[A] = {
-    F.guarantee(fa,
-      try {
+    F.guaranteeCase(fa) { _ =>
+      try 
         F.pure(action)
-      } catch {
+      catch 
         case NonFatal(ex) => error(ex)
-      }
-    )
+    }
   }
 
   override def withAsyncAction[A](fa: F[A])(action: => F[Unit]): F[A] = {
-    F.guarantee(fa,action)
+    F.guaranteeCase(fa)( _ => action)
   }
 
   override def withAsyncFinalizer[A](fa: => F[A])(f: => F[Unit]): F[A] = {

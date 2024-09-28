@@ -37,18 +37,18 @@ class CatsMonadThrow[F[_]](using MonadThrow[F]) extends CatsMonad[F] with CpsTry
 
 class CatsMonadThrowCancel[F[_]](using F: MonadCancel[F, Throwable]) extends CatsMonadThrow[F] with CpsTryMonadInstanceContext[F]:
 
+  // will be override when Sync become available
+  def poorMansDelay[A](a: =>A) = F.map(pure(()))(_ => a)
+  
+  def poorMansFlatDelay[A](a: => F[A]) = F.flatMap(F.pure(()))(_ => a)
   
   override def withAction[A](fa: F[A])(action: => Unit): F[A] = {
-    F.guaranteeCase(fa) { _ =>
-      try 
-        F.pure(action)
-      catch 
-        case NonFatal(ex) => error(ex)
-    }
+    F.guaranteeCase(fa) { _ => poorMansDelay(action) }
   }
 
   override def withAsyncAction[A](fa: F[A])(action: => F[Unit]): F[A] = {
-    F.guaranteeCase(fa)( _ => action)
+    F.guaranteeCase(fa)( _ => poorMansFlatDelay(action) )
+   //F.onCancel(fa, action)
   }
 
   override def withAsyncFinalizer[A](fa: => F[A])(f: => F[Unit]): F[A] = {

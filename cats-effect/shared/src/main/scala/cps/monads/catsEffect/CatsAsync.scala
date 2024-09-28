@@ -38,9 +38,9 @@ class CatsMonadThrow[F[_]](using MonadThrow[F]) extends CatsMonad[F] with CpsTry
 class CatsMonadThrowCancel[F[_]](using F: MonadCancel[F, Throwable]) extends CatsMonadThrow[F] with CpsTryMonadInstanceContext[F]:
 
   // will be override when Sync become available
-  def poorMansDelay[A](a: =>A) = F.map(pure(()))(_ => a)
-  
-  def poorMansFlatDelay[A](a: => F[A]) = F.flatMap(F.pure(()))(_ => a)
+  def poorMansDelay[A](a: =>A) = F.map(F.unit)(_ => a)
+
+  def poorMansFlatDelay[A](a: => F[A]) = F.flatMap(F.unit)(_ => a)
   
   override def withAction[A](fa: F[A])(action: => Unit): F[A] = {
     F.guaranteeCase(fa) { _ => poorMansDelay(action) }
@@ -81,6 +81,10 @@ class CatsAsync[F[_]](using Async[F]) extends CatsMonadThrow[F] with CpsAsyncEff
 end CatsAsync
 
 class CatsAsyncCancel[F[_]](using Async[F], MonadCancel[F, Throwable]) extends CatsMonadThrowCancel[F] with CpsAsyncEffectMonadInstanceContext[F]:
+
+  override def poorMansDelay[A](a: => A) = summon[Async[F]].delay(a)
+
+  override def poorMansFlatDelay[A](a: => F[A]) = summon[Async[F]].defer(a)
 
   def adoptCallbackStyle[A](source: (Try[A]=>Unit) => Unit): F[A] =
     CatsAsyncHelper.adoptCallbackStyle(source)

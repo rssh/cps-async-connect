@@ -9,12 +9,13 @@ import concurrent.duration.*
 import cps.*
 import cps.monads.catsEffect.given
 
-import scala.concurrent.CancellationException
+import scala.concurrent.{CancellationException, ExecutionContext}
+import scala.util.control.NonFatal
 
 
 class TryFinallyCancellableSuite extends CatsEffectSuite {
 
-  test("L00:  ensure that finally block is executed") {
+  test("L00:  0000 ensure that finally sync block is executed") {
     var x = 0
     var finalizerCalled = false
     val run = async[IO] {
@@ -40,7 +41,7 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
   //given cps.macros.flags.PrintCode.type = cps.macros.flags.PrintCode
 
 
-  test("L001: ensure that finally blok is executed after cancelled") {
+  test("L001: 1200 ensure that finally blok is executed after cancelled") {
 
     var finalizerCalled = false
     val run = async[IO] {
@@ -71,17 +72,19 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
   }
 
 
-  test("L002: ensure that async finally blok is executed after cancelled with async finalizer") {
+  test("L002: 1210 ensure that async finally blok is executed after cancelled with async finalizer") {
 
     var finalizerCalled = false
     var x = 0
+    var y = 0
     val run = async[IO] {
       println(s"in testFinalizeCancelled ${summon[CpsMonad[IO]]}")
       try {
+        x = await(IO.delay(1))
         IO.canceled.await
       } finally {
-        println("in async finalizer")
-        x = await(IO.delay(1))
+        //println("in async finalizer")
+        y = await(IO.delay(2))
         finalizerCalled = true
       }
     }
@@ -95,12 +98,13 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
         //ex.printStackTrace()
 
     assert(x == 1)
+    assert(y == 2)
     assert(finalizerCalled)
 
   }
 
 
-  test("L003: ensure that async finally blok is executed after cancelled, and exception from it is exists somewhere") {
+  test("L003: 1211 ensure that async finally blok is executed after cancelled, and exception from it is exists somewhere") {
 
     var finalizerCalled = false
     var x = 0
@@ -116,37 +120,56 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
 
     var runtimeExceptionCatched = false
     try
-      given IORuntime = munitIORuntime
+      val defaultCompute = munitIORuntime.compute
+      var exceptionCatcher: (Throwable => Boolean) = (ex) => false
+      val myDelegateExecutionContext = new ExecutionContext {
+        override def execute(runnable: Runnable): Unit = {
+          defaultCompute.execute(
+            new Runnable {
+              def run(): Unit =
+                try
+                  runnable.run()
+                catch
+                  case NonFatal(ex) =>
+                    reportFailure(ex)
+                    // let default also reports it
+                    throw ex
+            }
+          )
+        }
+
+        override def reportFailure(cause: Throwable): Unit = {
+          if (exceptionCatcher(cause)) {
+            runtimeExceptionCatched = true
+          }
+          //println(s"myDelegateExecutionContext: exception: $cause")
+        }
+      }
+      given IORuntime = IORuntime(
+        compute = myDelegateExecutionContext,
+        blocking = _root_.cats.effect.CatsEffectBackDoor.blocking(munitIORuntime),
+        scheduler = munitIORuntime.scheduler,
+        shutdown = munitIORuntime.shutdown,
+        config = munitIORuntime.config
+      )
+      exceptionCatcher = (ex) => ex.getMessage() == "AAA"
       val outcome = run.unsafeRunSync()
       println(s"outcome: $outcome")
     catch
       case ex: CancellationException =>
-        var i = 0
-        if (ex.getSuppressed().length == 0) {
-          println("no suppressed")
-        }
-        var found = false
-        while (i < ex.getSuppressed().length && !found) {
-          println(s"suppressed: ${ex.getSuppressed()(i)}")
-          if (ex.getSuppressed()(i).getMessage() == "AAA") {
-            println("suppressed found")
-            found = true
-          }
-          i = i + 1
-        }
+        //
         println(s"ex: $ex")
       case ex: RuntimeException =>
-
         runtimeExceptionCatched = true
         println(s"ex: $ex")
 
     assert(x == 1)
     assert(finalizerCalled)
-    //assert(runtimeExceptionCatched)
+    assert(runtimeExceptionCatched)
 
   }
 
-  test("L004:  check that finally executed after the main block with cancellation") {
+  test("L004:  1200 check that finally executed after the main block with cancellation") {
     var x=0
     val run = async[IO] {
       try {
@@ -172,7 +195,7 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
 
   }
 
-  test("L005:  check that finally executed after the async main block without exception") {
+  test("L005: 1000 check that finally executed after the async main block without exception") {
 
     //given cps.macros.flags.PrintCode.type = cps.macros.flags.PrintCode
 
@@ -193,7 +216,7 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
 
   }
 
-  test("L006: check that finally executed after the sync main block without exception") {
+  test("L006: 0000 check that finally executed after the sync main block without exception") {
 
     //given cps.macros.flags.PrintCode.type = cps.macros.flags.PrintCode
 
@@ -222,7 +245,7 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
   }
 
 
-  test("L007: check that finally executed after the ascync main block without exception with async finalizer") {
+  test("L007: 1010 check that finally executed after the ascync main block without exception with async finalizer") {
 
     given cps.macros.flags.PrintCode.type = cps.macros.flags.PrintCode
 
@@ -264,7 +287,7 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
 
   }
 
-  test("L008: check that finally executed after the async main block with exception") {
+  test("L008: 1100 check that finally executed after the async main block with exception") {
     @volatile var x=0
     @volatile var mainBlockCalled=0
     @volatile var finalizerCalled=0
@@ -311,6 +334,35 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
 
   }
 
+  test("L008: 1110 check that async finally executed after the async main block with exception") {
+
+    @volatile var x=0
+    @volatile var y=0
+    @volatile var mainBlockCalled=0
+    @volatile var finalizerCalled=0
+    val run = async[IO] {
+      try {
+        x = await(IO.delay(2))
+        mainBlockCalled = mainBlockCalled+1
+        throw RuntimeException("AAA")
+      } finally {
+        y = await(IO.delay(1))
+        finalizerCalled = finalizerCalled+1
+        if (x == 2) then
+          x = 3
+        else
+          x = 1
+      }
+    }
+
+    run.intercept[RuntimeException].map{_ =>
+      assert(x == 3)
+      assert(y == 1)
+      assert(mainBlockCalled == 1)
+      assert(finalizerCalled == 1)
+    }
+
+  }
 
 
 }

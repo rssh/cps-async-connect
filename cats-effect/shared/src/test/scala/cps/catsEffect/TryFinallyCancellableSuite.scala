@@ -10,6 +10,7 @@ import cps.*
 import cps.monads.catsEffect.given
 
 import scala.concurrent.{CancellationException, ExecutionContext}
+import scala.util.{Failure, Success}
 import scala.util.control.NonFatal
 
 
@@ -60,14 +61,28 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
     //  assert(finalizerCalled)
     //}
     // not working, because Cancellation omit exception handlers.
-    try
+    //try
       given IORuntime = munitIORuntime
-      val outcome = run.unsafeRunSync()
-    catch
-      case ex: CancellationException =>
-        println(s"ex: $ex")
+      val outcomeFuture = run.unsafeToFuture().transform{
+        case Success(_) =>
+          assert(finalizerCalled)
+          Success(Success(()))
+        case Failure(ex) =>
+          assert(finalizerCalled)
+          Success(Failure(ex))
+      }
+      IO.fromFuture(IO.pure(outcomeFuture)).map{ result =>
+        result match
+          case Failure(ex: CancellationException) =>
+            //println(s"L001, CancellationException")
+          case Failure(ex) =>
+            assert(false,s"should have CancellationException we have $ex")
+        assert(finalizerCalled)
+      }
+    //catch
+    //  case ex: CancellationException =>
+    //    println(s"ex: $ex")
 
-    assert(finalizerCalled)
 
   }
 

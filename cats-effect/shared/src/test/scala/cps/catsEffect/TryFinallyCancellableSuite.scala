@@ -26,14 +26,11 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
         x = x + 1
         x
       } finally {
-        println(s"finally block start, x = $x")
         x = x + 1
         finalizerCalled = true
-        println(s"finally block end, x = $x")
       }
     }
     run.map{ _ =>
-      println(s"x = $x")
       assert(finalizerCalled)
       assert(x == 4)
     }
@@ -46,11 +43,9 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
 
     var finalizerCalled = false
     val run = async[IO] {
-      println(s"in testFinalizeCancelled ${summon[CpsMonad[IO]]}")
       try {
         IO.canceled.await
       } finally {
-        println("in finalizer")
         finalizerCalled = true
       }
     }
@@ -61,7 +56,6 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
     //  assert(finalizerCalled)
     //}
     // not working, because Cancellation omit exception handlers.
-    //try
       given IORuntime = munitIORuntime
       val outcomeFuture = run.unsafeToFuture().transform{
         case Success(_) =>
@@ -79,9 +73,6 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
             assert(false,s"should have CancellationException we have $ex")
         assert(finalizerCalled)
       }
-    //catch
-    //  case ex: CancellationException =>
-    //    println(s"ex: $ex")
 
 
   }
@@ -93,7 +84,6 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
     var x = 0
     var y = 0
     val run = async[IO] {
-      println(s"in testFinalizeCancelled ${summon[CpsMonad[IO]]}")
       try {
         x = await(IO.delay(1))
         IO.canceled.await
@@ -104,18 +94,20 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
       }
     }
 
-    try
-      given IORuntime = munitIORuntime
-      val outcome = run.unsafeRunSync()
-    catch
-      case ex: CancellationException =>
-        println(s"ex: $ex")
-        //ex.printStackTrace()
 
-    assert(x == 1)
-    assert(y == 2)
-    assert(finalizerCalled)
-
+    given IORuntime = munitIORuntime
+    val outcomeFuture = run.unsafeToFuture().transform{
+      case Success(_) =>
+        Failure(new RuntimeException("computation should be cancelled"))
+      case Failure(ex) =>
+        assert(ex.isInstanceOf[CancellationException], s"unexpected exception: $ex")
+        Success(())
+    }
+    IO.fromFuture(IO.pure(outcomeFuture)).map{ _ =>
+      assert(finalizerCalled)
+      assert(x == 1)
+      assert(y == 2)
+    }
   }
 
 
@@ -134,10 +126,10 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
     }
 
     var runtimeExceptionCatched = false
-    try
-      val defaultCompute = munitIORuntime.compute
-      var exceptionCatcher: (Throwable => Boolean) = (ex) => false
-      val myDelegateExecutionContext = new ExecutionContext {
+    //try
+    val defaultCompute = munitIORuntime.compute
+    var exceptionCatcher: (Throwable => Boolean) = (ex) => false
+    val myDelegateExecutionContext = new ExecutionContext {
         override def execute(runnable: Runnable): Unit = {
           defaultCompute.execute(
             new Runnable {
@@ -159,7 +151,8 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
           }
           //println(s"myDelegateExecutionContext: exception: $cause")
         }
-      }
+    }
+    val outcome = {
       given IORuntime = IORuntime(
         compute = myDelegateExecutionContext,
         blocking = _root_.cats.effect.CatsEffectBackDoor.blocking(munitIORuntime),
@@ -167,20 +160,29 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
         shutdown = munitIORuntime.shutdown,
         config = munitIORuntime.config
       )
-      exceptionCatcher = (ex) => ex.getMessage() == "AAA"
-      val outcome = run.unsafeRunSync()
-      println(s"outcome: $outcome")
-    catch
-      case ex: CancellationException =>
-        //
-        println(s"ex: $ex")
-      case ex: RuntimeException =>
-        runtimeExceptionCatched = true
-        println(s"ex: $ex")
 
-    assert(x == 1)
-    assert(finalizerCalled)
-    assert(runtimeExceptionCatched)
+      exceptionCatcher = (ex) => ex.getMessage() == "AAA"
+      run.unsafeToFuture().transform{
+        case Success(_) =>
+          Failure(new RuntimeException("computation should be cancelled"))
+        case Failure(ex) =>
+          assert(ex.isInstanceOf[CancellationException], s"unexpected exception: $ex")
+          Success(ex)
+      }
+    }
+    println(s"outcome: $outcome")
+    //catch
+    //  case ex: CancellationException =>
+    //    //
+    //    println(s"ex: $ex")
+    //  case ex: RuntimeException =>
+    //    runtimeExceptionCatched = true
+    //    println(s"ex: $ex")
+    IO.fromFuture(IO.pure(outcome)).map { _ =>
+      assert(x == 1)
+      assert(finalizerCalled)
+      assert(runtimeExceptionCatched)
+    }
 
   }
 
@@ -198,16 +200,17 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
       }
     }
 
-    try {
-      given IORuntime = munitIORuntime
-      val outcome = run.unsafeRunSync()
-      assert(x == 3)
-    } catch {
-      case ex: CancellationException =>
-        assert(x == 3)
+    given IORuntime = munitIORuntime
+    val runFuture = run.unsafeToFuture().transform{
+        case Success(_) =>
+          Failure(new RuntimeException("computation should be cancelled"))
+        case Failure(ex) =>
+          assert(ex.isInstanceOf[CancellationException], s"unexpected exception: $ex")
+          assert(x == 3)
+          Success(ex)
     }
-
-
+    IO.fromFuture(IO.pure(runFuture))
+    
   }
 
   test("L005: 1000 check that finally executed after the async main block without exception") {
@@ -275,9 +278,7 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
         nMainCalls = nMainCalls + 1
       } finally {
         nFinalizerCalls = nFinalizerCalls + 1
-        println(s"L007: in finalizer: x = $x, y = $y")
         y = await(IO.delay(2))
-        println(s"L007: after delay in async block, x = $x, y = $y")
         if (x == 2) then
           x = 3
         else
@@ -312,7 +313,6 @@ class TryFinallyCancellableSuite extends CatsEffectSuite {
         mainBlockCalled = mainBlockCalled+1
         await(IO.raiseError(new RuntimeException("AAA")))
       } finally {
-        println(s"L008: finally block, x = $x, mainBlockCalled = $mainBlockCalled, finalizerCalled = $finalizerCalled")
         finalizerCalled = finalizerCalled+1
         if (x == 2) then
           x = 3

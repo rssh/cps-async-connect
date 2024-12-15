@@ -35,21 +35,30 @@ class CatsMonadThrow[F[_]](using MonadThrow[F]) extends CatsMonad[F] with CpsTry
     summon[MonadThrow[F]].redeemWith(fa)( ex => f(Failure(ex)), a => f(Success(a)) )
 
 
-class CatsMonadThrowCancel[F[_]](using F: MonadCancel[F, Throwable]) extends CatsMonadThrow[F] with CpsTryMonadInstanceContext[F]:
+class CatsMonadCancel[F[_]](using F: MonadCancel[F, Throwable]) extends CatsMonadThrow[F] with CpsTryMonadInstanceContext[F]:
 
+  // will be override when Sync become available
+  def poorMansDelay[A](a: =>A) = F.map(F.unit)(_ => a)
+
+  def poorMansFlatDelay[A](a: => F[A]) = F.flatMap(F.unit)(_ => a)
   
   override def withAction[A](fa: F[A])(action: => Unit): F[A] = {
-    F.guarantee(fa,
-      try {
-        F.pure(action)
-      } catch {
-        case NonFatal(ex) => error(ex)
-      }
-    )
+    withAsyncAction(fa)(poorMansDelay(action))
   }
 
   override def withAsyncAction[A](fa: F[A])(action: => F[Unit]): F[A] = {
-    F.guarantee(fa,action)
+    //F.guaranteeCase(fa)(_ => poorMansFlatDelay(action))
+    import cats.syntax.all.*
+    F.uncancelable { poll =>
+      F.onCancel(poll(fa), poorMansFlatDelay(action) ).handleErrorWith { ex =>
+        action.handleErrorWith { ex1 =>
+          ex1.addSuppressed(ex)
+          F.raiseError(ex1)
+        }.flatMap(_ => F.raiseError(ex))
+      }.flatTap { _ =>
+        action
+      }
+    }
   }
 
   override def withAsyncFinalizer[A](fa: => F[A])(f: => F[Unit]): F[A] = {
@@ -81,10 +90,46 @@ class CatsAsync[F[_]](using Async[F]) extends CatsMonadThrow[F] with CpsAsyncEff
 
 end CatsAsync
 
-class CatsAsyncCancel[F[_]](using Async[F], MonadCancel[F, Throwable]) extends CatsMonadThrowCancel[F] with CpsAsyncEffectMonadInstanceContext[F]:
+class CatsAsyncCancel[F[_]](using Async[F], MonadCancel[F, Throwable]) extends CatsMonadCancel[F] with CpsAsyncEffectMonadInstanceContext[F]:
+
+  override def poorMansDelay[A](a: => A) = summon[Async[F]].delay(a)
+
+  override def poorMansFlatDelay[A](a: => F[A]) = summon[Async[F]].defer(a)
+
+  override def withAction[A](fa: F[A])(action: => Unit): F[A] = {
+    withAsyncAction(fa)(summon[Async[F]].delay(action))
+  }
+
+  override def withAsyncAction[A](fa: F[A])(action: => F[Unit]): F[A] = {
+    import cats.syntax.all.*
+    summon[MonadCancel[F, Throwable]].uncancelable { poll =>
+      summon[MonadCancel[F, Throwable]].onCancel(poll(fa), summon[Async[F]].defer(action))
+       .handleErrorWith { ex =>
+           action.handleErrorWith{ ex1 =>
+             ex1.addSuppressed(ex)
+             summon[MonadCancel[F,Throwable]].raiseError(ex1)
+           }.flatMap{ _ =>
+             summon[MonadCancel[F,Throwable]].raiseError(ex)
+           }  
+       }
+       .flatTap { _ => action }
+    }
+  }
+
+
+  // inlined to avoid unoptimized virtual calls
+  //override def withAction[A](fa: F[A])(action: => Unit): F[A] = {
+  //  summon[MonadCancel[F,Throwable]].guaranteeCase(fa) { _ => summon[Async[F]].delay(action) }
+  //}
+
+  // inlined to avoid unoptimized virtual calls
+  //override def withAsyncAction[A](fa: F[A])(action: => F[Unit]): F[A] = {
+  //  summon[MonadCancel[F,Throwable]].guaranteeCase(fa)(_ => summon[Async[F]].defer(action))
+  //}
 
   def adoptCallbackStyle[A](source: (Try[A]=>Unit) => Unit): F[A] =
     CatsAsyncHelper.adoptCallbackStyle(source)
+
 
 end CatsAsyncCancel
 
@@ -121,8 +166,7 @@ given catsMonadPure[F[_]](using Monad[F], NotGiven[MonadThrow[F]]): CpsPureMonad
 
 given catsMonadThrow[F[_]](using MonadThrow[F],  NotGiven[Async[F]]): CpsTryMonadInstanceContext[F] = CatsMonadThrow[F]()
 
-given catsMonadThrowCancel[F[_]](using MonadCancel[F, Throwable], NotGiven[Async[F]]): CatsMonadThrowCancel[F] = CatsMonadThrowCancel[F]()
-
+given catsMonadCancel[F[_]](using MonadCancel[F, Throwable], NotGiven[Async[F]]): CatsMonadCancel[F] = CatsMonadCancel[F]()
 
 given catsAsync[F[_]](using Async[F],  NotGiven[Concurrent[F]], NotGiven[MonadCancel[F,Throwable]]): CatsAsync[F] = CatsAsync[F]()
 

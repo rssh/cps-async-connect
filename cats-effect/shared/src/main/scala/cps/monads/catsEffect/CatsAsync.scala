@@ -51,7 +51,10 @@ class CatsMonadCancel[F[_]](using F: MonadCancel[F, Throwable]) extends CatsMona
     import cats.syntax.all.*
     F.uncancelable { poll =>
       F.onCancel(poll(fa), poorMansFlatDelay(action) ).handleErrorWith { ex =>
-        action.flatMap(_ => F.raiseError(ex))
+        action.handleErrorWith { ex1 =>
+          ex1.addSuppressed(ex)
+          F.raiseError(ex1)
+        }.flatMap(_ => F.raiseError(ex))
       }.flatTap { _ =>
         action
       }

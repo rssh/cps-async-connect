@@ -15,7 +15,11 @@ And if you want to use JDK-21 virtual threads for translation of high-order func
   libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect-loom" % version  
 ```
 
+If you use scala lts versinm then use artefacts with lts suffix:
 
+```
+  libraryDependencies += "com.github.rssh" %%% "cps-async-connect-cats-effect-lts" % version  
+```
 
 Usage:
 
@@ -35,6 +39,7 @@ def doSomething(): IO[T] = async[IO] {
   * IO  -  catsIO  (implements CpsConcurrentEffectMonad with conversion to Future)
   * Generic `F[_]:Async` - catsAsync (implements CpsAsyncMonad)
   * Generic `F[_]:MonadThrow` - catsMonadThrow (implements CpsTryMonad)
+  * Generic `F[_]:MonadCancel` - catsMonadCancel (implements CpsTryMonad)
   * Generic `F[_]:Monad` - catsMonad (implements CpsMonad)
 
 Also implemented pseudo-synchronious interface for resources, i.e. for `r:Resource[F,A]` it is possible to write:
@@ -70,6 +75,35 @@ instead
  })  
 ```
 
+## Cancellation
+
+`cps-async-connect-cats-effect` provides `CpsMonadCancel` typeclass, which implements finalising of resources during cancellation.
+
+I.e. if we have next code:
+
+```scala
+async[IO] {
+  val r = allocateResource()
+  try {
+    await(doSomething(r))
+  } catch {
+    case NonFatal(e) =>
+      handleException(e)
+  } finally {
+    r.release()
+  }
+}
+```
+ and Fiber which evaluated this code will be canceled during `doSomething`,  then finally block will be executed.
+
+Note, that execution model in this case will be differ from traditional java try-catch-finally:
+
+      * it is impossible to catch CancellationException in the catch block.
+      * during cancellation, exception from finalizers will not be propagated as outcome of cancelled Fiber, but instead 
+         will be reported to the exception handler of the IO execution pool.
+      * when finalizer is executed not during cancellation, but during normal completion, then exception will be propagated as outcome of the Fiber.
+
+Next code is an example of handling 
 
 
 # monix:
@@ -78,6 +112,7 @@ instead
   libraryDependencies += "com.github.rssh" %%% "cps-async-connect-monix" % version  
 ```
 
+(or with '-lts' for scala-lts version)
 
 Usage:
 

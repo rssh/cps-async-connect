@@ -14,7 +14,7 @@ Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
    libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % dottyCpsAsyncVersion,
-   libraryDependencies += "org.scalameta" %%% "munit" % "1.0.1" % Test,
+   libraryDependencies += "org.scalameta" %%% "munit" % "1.0.3" % Test,
    testFrameworks += new TestFramework("munit.Framework"),
    scalacOptions ++= Seq( "-Wvalue-discard", "-Wnonunit-statement"),
    autoCompilerPlugins := true,
@@ -101,9 +101,9 @@ lazy val zio2  = crossProject(JSPlatform,JVMPlatform)
     commonSettings,
     name := "cps-async-connect-zio2",
     libraryDependencies ++= Seq(
-      "dev.zio" %%% "zio" % "2.1.9",
-      "dev.zio" %%% "zio-managed" % "2.1.9",
-      "dev.zio" %%% "zio-streams" % "2.1.9",
+      "dev.zio" %%% "zio" % "2.1.13",
+      "dev.zio" %%% "zio-managed" % "2.1.13",
+      "dev.zio" %%% "zio-streams" % "2.1.13",
     )
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
@@ -149,7 +149,7 @@ lazy val streamAkka = (project in file("stream-akka")).
                          scalacOptions += "-explain",
                          resolvers += "Akka library repository".at("https://repo.akka.io/maven"),
                          libraryDependencies ++= Seq(
-                            ("com.typesafe.akka" %% "akka-stream" % "2.9.5")
+                            ("com.typesafe.akka" %% "akka-stream" % "2.10.0")
                          )
                       )
 
@@ -159,7 +159,7 @@ lazy val streamPekko = (project in file("stream-pekko")).
     name := "cps-async-connect-pekko-stream",
     scalacOptions += "-explain",
     libraryDependencies ++= Seq(
-      ("org.apache.pekko" %% "pekko-stream" % "1.1.0")
+      ("org.apache.pekko" %% "pekko-stream" % "1.1.2")
     )
   )
 

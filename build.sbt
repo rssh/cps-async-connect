@@ -1,6 +1,6 @@
 import sbt.Keys.autoCompilerPlugins
 
-val dottyVersion = "3.3.3"
+val dottyVersion = "3.3.4"
 val dottyCpsAsyncVersion = "0.9.23"
 
 ThisBuild/version := "0.9.23"

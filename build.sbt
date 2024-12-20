@@ -40,7 +40,7 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     name := "cps-async-connect-cats-effect",
-    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.5.4",
+    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.5.7",
     libraryDependencies += "org.typelevel" %%% "munit-cats-effect" % "2.0.0" % Test
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },

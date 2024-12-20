@@ -25,7 +25,6 @@ class DCAIssue65Suite extends FunSuite {
   //given cps.macros.flags.PrintCode.type = cps.macros.flags.PrintCode
 
   def readingByIterator(ec: ExecutionContext, nIterations: Int)(implicit loc: munit.Location):Future[Long] = {
-    println(s"ExecutionContext=$ec")
     given ExecutionContext = ec
     val stream: AsyncList[IO, Int] = asyncStream[AsyncList[IO, Int]] { out =>
       out.emit(0)
@@ -41,9 +40,7 @@ class DCAIssue65Suite extends FunSuite {
       }
       res
     }
-    println(s"readingByIterator: before unsafeToFuture")
     val retval = compute.unsafeToFuture()
-    println(s"readingByIterator: after unsafeToFuture")
     retval
   }
   

@@ -15,7 +15,7 @@ Global / concurrentRestrictions += Tags.limit(ScalaJSTags.Link, 1)
 lazy val commonSettings = Seq(
    scalaVersion := dottyVersion,
    libraryDependencies += "com.github.rssh" %%% "dotty-cps-async" % dottyCpsAsyncVersion,
-   libraryDependencies += "org.scalameta" %%% "munit" % "1.0.1" % Test,
+   libraryDependencies += "org.scalameta" %%% "munit" % "1.0.3" % Test,
    testFrameworks += new TestFramework("munit.Framework"),
    scalacOptions ++= Seq( "-Wvalue-discard", "-Wnonunit-statement"),
    autoCompilerPlugins := true,
@@ -41,7 +41,7 @@ lazy val catsEffect  = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     name := "cps-async-connect-cats-effect",
-    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.5.4",
+    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.5.7",
     libraryDependencies += "org.typelevel" %%% "munit-cats-effect" % "2.0.0" % Test
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
@@ -102,9 +102,9 @@ lazy val zio2  = crossProject(JSPlatform,JVMPlatform)
     commonSettings,
     name := "cps-async-connect-zio2",
     libraryDependencies ++= Seq(
-      "dev.zio" %%% "zio" % "2.1.9",
-      "dev.zio" %%% "zio-managed" % "2.1.9",
-      "dev.zio" %%% "zio-streams" % "2.1.9",
+      "dev.zio" %%% "zio" % "2.1.13",
+      "dev.zio" %%% "zio-managed" % "2.1.13",
+      "dev.zio" %%% "zio-streams" % "2.1.13",
     )
   ).jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
